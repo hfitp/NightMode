@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.awaysoft.widget.Switch xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:switch="http://schemas.android.com/apk/res/com.awaysoft.nightlymode"
+    android:id="@+id/nightly_switch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:clickable="true"
+    android:focusable="false"
+    switch:switchMinWidth="96dip"
+    switch:switchTextAppearance="@style/TextAppearance.Switch"
+    switch:textOff="@string/switcher_close"
+    switch:textOn="@string/switcher_open"
+    switch:thumbDrawable="@drawable/switch_inner_holo_dark"
+    switch:thumbTextPadding="12dip"
+    switch:trackDrawable="@drawable/switch_track_holo_dark" />

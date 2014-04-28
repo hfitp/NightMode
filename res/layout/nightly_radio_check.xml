@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:textColor="@color/nightly_item_label_color"
+    android:textSize="18sp"
+    android:layout_width="match_parent"
+    android:layout_height="48dip"
+    android:background="@drawable/list_item_drawable"
+    android:drawableRight="@drawable/rd_metro_radio_drawable"
+    android:gravity="left|center_vertical"
+    android:paddingBottom="10dip"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip"
+    android:paddingTop="10dip" />

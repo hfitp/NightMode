@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="64dip"
+    android:orientation="horizontal" >
+
+    <include
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        layout="@layout/nightly_item_explain" />
+
+    <CheckBox
+        android:id="@+id/nightly_checkbox"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:background="@drawable/checkbox_drawable"
+        android:button="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:gravity="center" />
+</LinearLayout>

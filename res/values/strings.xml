@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application label -->
+    <string name="app_name">NightMode</string>
+    <string name="nightly_title">Night Manager</string>
+
+    <!-- Preference classify -->
+    <string name="preference">Preference</string>
+    <string name="preference_auto_start">Autostart Service</string>
+    <string name="preference_autostart_tips">Configure if service run on startup</string>
+    <string name="preference_notification">Notification</string>
+    <string name="preference_notification_tips">Configue if Manager show notification</string>
+    <string name="preference_floatwidget">Float Widget</string>
+    <string name="preference_floatwidget_tips">Configure if show float controller</string>
+    <string name="preference_nightly_mode">Night mode</string>
+    <string name="preference_mask_alpha">Mask Alpha</string>
+    <string name="preference_mask_alpha_tips">Configure night alpha</string>
+    <string name="preference_mask_color">Mask Color</string>
+    <string name="preference_mask_color_tips">Configure night color</string>
+
+    <!-- AutoNight classify -->
+    <string name="auto_nightly">Auto Night</string>
+    <string name="auto_nightly_time_buckets">Autostart in time buckets</string>
+    <string name="auto_nightly_time_tips">Autostart alarm time</string>
+    <string name="auto_nightly_for_all">Global autostart</string>
+    <string name="auto_nightly_for_all_tips">Auto mode apply for all apps</string>
+    <string name="auto_nightly_white_list">White list</string>
+
+    <!-- Information classify -->
+    <string name="information">Information</string>
+    <string name="information_feedback">Feedback</string>
+    <string name="information_feedback_email">E-mail: kang.ruikye@gmail.com</string>
+    <string name="information_about">About</string>
+    <string name="information_about_author">Author: kang.ruikye</string>
+
+    <!-- Translation strings -->
+    <string name="defualt_string">Default</string>
+    <string name="current_string">Current</string>
+    <string name="service_started">Night service started</string>
+    <string name="service_stoped">Night service stoped</string>
+
+    <string-array name="night_mode">
+        <item name="night_mode_auto">auto mode</item>
+        <item name="night_mode_nightly">nightly</item>
+        <item name="night_mode_normal">disable</item>
+    </string-array>
+
+    <string name="night_notification_tips">Touch for NightMode configuration</string>
+
+</resources>

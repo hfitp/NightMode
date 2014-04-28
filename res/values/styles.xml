@@ -1,0 +1,45 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Black">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowBackground">@android:color/background_dark</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="nightly_textview">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="item_explain_text" parent="nightly_textview">
+        <item name="android:textColor">@color/nightly_item_explain_color</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="item_label_text" parent="nightly_textview">
+        <item name="android:textColor">@color/nightly_item_label_color</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="item_class_label" parent="nightly_textview">
+        <item name="android:textColor">#8d8d8d</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+</resources>

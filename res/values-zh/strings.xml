@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application label -->
+    <string name="app_name"> 夜间模式</string>
+    <string name="nightly_title">夜间模式管理器</string>
+
+    <!-- Preference classify -->
+    <string name="preference">设置</string>
+    <string name="preference_auto_start">开机启动</string>
+    <string name="preference_autostart_tips">设置后台服务是否开机启动</string>
+    <string name="preference_notification">显示通知栏</string>
+    <string name="preference_notification_tips">设置是否在状态栏显示通知</string>
+    <string name="preference_floatwidget">显示控制浮窗</string>
+    <string name="preference_floatwidget_tips">设置是否显示浮动控制窗口</string>
+    <string name="preference_nightly_mode">模式设置</string>
+    <string name="preference_mask_alpha">夜间模式亮度</string>
+    <string name="preference_mask_alpha_tips">设置夜间模式透明度</string>
+    <string name="preference_mask_color">夜间模式颜色</string>
+    <string name="preference_mask_color_tips">设置夜间模式颜色</string>
+
+    <!-- AutoNightly classify -->
+    <string name="auto_nightly">智能模式</string>
+    <string name="auto_nightly_time_buckets">设定夜间时间</string>
+    <string name="auto_nightly_time_tips">自定义智能模式开启时间段</string>
+    <string name="auto_nightly_for_all">启用全局智能模式</string>
+    <string name="auto_nightly_for_all_tips">设置智能模式是否对所有应用使用</string>
+    <string name="auto_nightly_white_list">智能模式白名单</string>
+
+    <!-- Information classify -->
+    <string name="information">信息</string>
+    <string name="information_feedback">意见反馈</string>
+    <string name="information_feedback_email">反馈邮箱：kang.ruikye@gmail.com</string>
+    <string name="information_about">关于</string>
+    <string name="information_about_author">作者：kang.ruikye</string>
+
+    <!-- Translation strings -->
+    <string name="defualt_string">默认</string>
+    <string name="current_string">当前</string>
+    <string name="service_started">夜间模式服务已启动</string>
+    <string name="service_stoped">夜间模式服务已关闭</string>
+
+    <string-array name="night_mode">
+        <item name="night_mode_auto">智能模式</item>
+        <item name="night_mode_nightly">夜间模式</item>
+        <item name="night_mode_normal">白天模式</item>
+    </string-array>
+
+    <string name="night_notification_tips">触摸可显示夜间模式设置</string>
+
+</resources>
