@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:actionBar="http://schemas.android.com/apk/res/com.awaysoft.nightlymode"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#151515"
+    android:orientation="vertical" >
+
+    <com.awaysoft.widget.component.ActionBar
+        android:id="@+id/nightly_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bar_height"
+        actionBar:icon="@drawable/nightly_title_icon"
+        actionBar:optionLayout="@layout/nightly_switch"
+        actionBar:title="@string/nightly_title"
+        android:background="@drawable/action_bar_dark"
+        android:gravity="center_vertical"
+        android:paddingRight="@dimen/default_padding" />
+
+    <include layout="@layout/nightly_listview" />
+
+</LinearLayout>

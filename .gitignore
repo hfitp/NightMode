@@ -1,0 +1,16 @@
+.gradle/
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/
+.idea/vcs.xml
+.idea/workspace.xml
+NightlyMode.iml
+build/
+bin/
+*.gradle
+local.properties

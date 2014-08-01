@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -29,9 +30,8 @@ import com.awaysoft.nightlymode.widget.MatteLayer;
  *
  * @author kang
  */
-public class NightlyServices extends Service implements Callback {
+public class NightlyService extends Service implements Callback {
     private String mTopApp;
-    private String mCacheStr;
     private Handler mHandler;
     private AppMonitor mAppMonitor;
     private MatteLayer mMatteLayer;
@@ -50,6 +50,7 @@ public class NightlyServices extends Service implements Callback {
             if (Constant.BDC_PREFERENCE_CHENGED.equals(action)) {
                 Message msg = Message.obtain(mHandler);
                 msg.what = Constant.MSG_PREFERENCE_CHANGED;
+                msg.obj = intent.getIntExtra(Constant.PREFERENCE_TARGET_KEY, -1);
                 mHandler.sendMessage(msg);
             }
         }
@@ -75,7 +76,6 @@ public class NightlyServices extends Service implements Callback {
 
         // Register preference monitor receiver
         registerReceiver(mPreferenceReceiver, new IntentFilter(Constant.BDC_PREFERENCE_CHENGED));
-
     }
 
     @Override
@@ -91,19 +91,20 @@ public class NightlyServices extends Service implements Callback {
             startMonitor();
         }
 
-        if (Preference.sFloatWidget && !Preference.sActivityRunning) {
+        if (Preference.sFloatWidget) {
             mFloatController.attachToWindow(mGlobalWindow);
         } else {
             mFloatController.detachFromWindow();
         }
 
-        if (Preference.sNotification && !Preference.sActivityRunning) {
+        if (Preference.sNotification) {
             startForeground();
         } else {
             stopForeground(true);
         }
 
-        ComponentName name = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1).get(0).topActivity;
+        ComponentName name = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1).get(
+                0).topActivity;
         mTopApp = name.getPackageName();
         switchMode(mTopApp);
 
@@ -141,18 +142,18 @@ public class NightlyServices extends Service implements Callback {
             ComponentName name;
             while (!sStoped) {
                 try {
-                    name = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1).get(0).topActivity;
-                    mCacheStr = name.getPackageName();
+                    name = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1).get(
+                            0).topActivity;
+                    String cacheStr = name.getPackageName();
 
-                    if (!mTopApp.equals(mCacheStr)) {
-                        mTopApp = mCacheStr;
+                    if (!mTopApp.equals(cacheStr)) {
+                        mTopApp = cacheStr;
                         Message msg = Message.obtain(mHandler);
                         msg.what = Constant.MSG_UPDATE_APP_INFO;
-                        msg.obj = mCacheStr;
+                        msg.obj = cacheStr;
                         mHandler.sendMessage(msg);
                     }
 
-                    name = null;
                     sleep(100);
                 } catch (Exception e) {
                     // do nothing
@@ -162,7 +163,7 @@ public class NightlyServices extends Service implements Callback {
     }
 
     @SuppressWarnings("deprecation")
-    private final void startMonitor() {
+    private void startMonitor() {
         if (mAppMonitor == null || !mAppMonitor.isAlive()) {
             if (mAppMonitor != null) {
                 mAppMonitor.sStoped = true;
@@ -174,17 +175,20 @@ public class NightlyServices extends Service implements Callback {
         }
     }
 
-    private final void stopMonitor() {
+    private void stopMonitor() {
         if (mAppMonitor != null) {
             mAppMonitor.sStoped = true;
         }
     }
 
-    private final void startForeground() {
-        Notification mNotification = new Notification(R.drawable.night_notification_icon, getText(R.string.nightly_title), System.currentTimeMillis());
+    @SuppressWarnings("deprecation")
+    private void startForeground() {
+        Notification mNotification = new Notification(R.drawable.night_notification_icon,
+                                                      getText(R.string.nightly_title), System.currentTimeMillis());
         Intent notificationIntent = new Intent(this, PreferenceActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        mNotification.setLatestEventInfo(this, getText(R.string.nightly_title), getText(R.string.night_notification_tips), pendingIntent);
+        mNotification.setLatestEventInfo(this, getText(R.string.nightly_title),
+                                         getText(R.string.night_notification_tips), pendingIntent);
         startForeground(mNotification.hashCode(), mNotification);
     }
 
@@ -213,7 +217,7 @@ public class NightlyServices extends Service implements Callback {
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
-        // Top application changed
+            // Top application changed
             case Constant.MSG_UPDATE_APP_INFO: {
                 switchMode((String) msg.obj);
                 break;
@@ -232,7 +236,13 @@ public class NightlyServices extends Service implements Callback {
             }
             // Preference changed
             case Constant.MSG_PREFERENCE_CHANGED: {
-                onPreferenceChanged();
+                Object obj = msg.obj;
+                int tag = -1;
+                if (obj instanceof Integer) {
+                    tag = (Integer) obj;
+                }
+
+                onPreferenceChanged(tag);
                 break;
             }
 
@@ -243,21 +253,42 @@ public class NightlyServices extends Service implements Callback {
         return true;
     }
 
-    private void onPreferenceChanged() {
-        if (!Preference.sActivityRunning) {
-            if (Preference.sFloatWidget) {
-                mFloatController.attachToWindow(mGlobalWindow);
-            } else {
-                mFloatController.detachFromWindow();
-            }
+    private void onPreferenceChanged(int tag) {
 
-            if (Preference.sNotification) {
-                startForeground();
-            } else {
-                stopForeground(true);
+        Log.d("NightService", "");
+
+        if (!Preference.sActivityRunning && tag != -1) {
+            switch (tag) {
+                case Constant.TAG_ID_MODE: {
+                    if (Preference.sFloatWidget) {
+                        mFloatController.attachToWindow(mGlobalWindow);
+                    } else {
+                        mFloatController.detachFromWindow();
+                    }
+
+                    mHandler.sendEmptyMessage(Constant.MSG_STATUS_CHANGED);
+                    return;
+                }
+
+                case Constant.TAG_ID_ALPHA: {
+                    mMatteLayer.setMatteAlpha(Preference.sMatteAlpha);
+                    return;
+                }
+
+                case Constant.TAG_ID_COLOR: {
+                    //TODO change color
+                    return;
+                }
+
+                case Constant.TAG_ID_NOTIFICATION: {
+                    if (Preference.sNotification) {
+                        startForeground();
+                    } else {
+                        stopForeground(true);
+                    }
+                    break;
+                }
             }
         }
-
-        mHandler.sendEmptyMessage(Constant.MSG_STATUS_CHANGED);
     }
 }
