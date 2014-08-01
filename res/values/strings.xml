@@ -4,6 +4,7 @@
     <!-- Application label -->
     <string name="app_name">NightMode</string>
     <string name="nightly_title">Night Manager</string>
+    <string name="nightly_app_selector">White List</string>
 
     <!-- Preference classify -->
     <string name="preference">Preference</string>
@@ -26,11 +27,12 @@
     <string name="auto_nightly_for_all">Global autostart</string>
     <string name="auto_nightly_for_all_tips">Auto mode apply for all apps</string>
     <string name="auto_nightly_white_list">White list</string>
+    <string name="auto_nightly_white_list_tips">Auto-mode only support apps in White-list</string>
 
     <!-- Information classify -->
     <string name="information">Information</string>
     <string name="information_feedback">Feedback</string>
-    <string name="information_feedback_email">E-mail: kang.ruikye@gmail.com</string>
+    <string name="information_feedback_email">E-mail: rakkang@qq.com</string>
     <string name="information_about">About</string>
     <string name="information_about_author">Author: kang.ruikye</string>
 
@@ -47,5 +49,8 @@
     </string-array>
 
     <string name="night_notification_tips">Touch for NightMode configuration</string>
+
+    <string name="night_alpha_min_value">10%</string>
+    <string name="night_alpha_max_value">90%</string>
 
 </resources>

@@ -3,7 +3,8 @@
 
     <!-- Application label -->
     <string name="app_name"> 夜间模式</string>
-    <string name="nightly_title">夜间模式管理器</string>
+    <string name="nightly_title">夜间模式设置</string>
+    <string name="nightly_app_selector">白名单设置</string>
 
     <!-- Preference classify -->
     <string name="preference">设置</string>
@@ -19,18 +20,19 @@
     <string name="preference_mask_color">夜间模式颜色</string>
     <string name="preference_mask_color_tips">设置夜间模式颜色</string>
 
-    <!-- AutoNightly classify -->
+    <!-- AutoNightly classify -->umeng-analytics-v5.2.4.jar
     <string name="auto_nightly">智能模式</string>
     <string name="auto_nightly_time_buckets">设定夜间时间</string>
     <string name="auto_nightly_time_tips">自定义智能模式开启时间段</string>
     <string name="auto_nightly_for_all">启用全局智能模式</string>
     <string name="auto_nightly_for_all_tips">设置智能模式是否对所有应用使用</string>
     <string name="auto_nightly_white_list">智能模式白名单</string>
+    <string name="auto_nightly_white_list_tips">智能模式只支持在白名单中的应用</string>
 
     <!-- Information classify -->
     <string name="information">信息</string>
     <string name="information_feedback">意见反馈</string>
-    <string name="information_feedback_email">反馈邮箱：kang.ruikye@gmail.com</string>
+    <string name="information_feedback_email">反馈邮箱：rakkang@qq.com</string>
     <string name="information_about">关于</string>
     <string name="information_about_author">作者：kang.ruikye</string>
 
@@ -46,6 +48,6 @@
         <item name="night_mode_normal">白天模式</item>
     </string-array>
 
-    <string name="night_notification_tips">触摸可显示夜间模式设置</string>
+    <string name="night_notification_tips">点击打开夜间模式设置</string>
 
 </resources>

@@ -1,9 +1,15 @@
 
 package com.awaysoft.nightlymode;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -14,22 +20,36 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.awaysoft.nightlymode.adapter.PreferenceAdapter;
 import com.awaysoft.nightlymode.adapter.PreferenceConfig;
 import com.awaysoft.nightlymode.adapter.PreferenceItemHolder;
-import com.awaysoft.nightlymode.services.NightlyServices;
+import com.awaysoft.nightlymode.services.NightlyService;
 import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
+import com.awaysoft.nightlymode.utils.Utils;
+import com.awaysoft.nightlymode.widget.BaseActivity;
 import com.awaysoft.widget.Switch;
 import com.awaysoft.widget.component.ColorPicker;
 import com.awaysoft.widget.component.ColorPicker.ColorObj;
 import com.awaysoft.widget.component.ColorPicker.OnColorChangeListener;
 import com.awaysoft.widget.component.CustomDialog;
 import com.awaysoft.widget.component.CustomDialog.OnOpsBtnClickListener;
+import com.umeng.analytics.MobclickAgent;
 
-public class PreferenceActivity extends Activity implements OnItemClickListener {
+public class PreferenceActivity extends BaseActivity implements OnItemClickListener {
     private PreferenceAdapter mPreferenceAdapter;
+
+    private BroadcastReceiver mPreferenceChangedReveicer = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (TextUtils.equals(Constant.BDC_SWITCH_MODE, action)) {
+                mPreferenceAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,40 +63,43 @@ public class PreferenceActivity extends Activity implements OnItemClickListener 
         Preference.sActivityRunning = true;
 
         Switch switcher = (Switch) findViewById(R.id.nightly_switch);
+        switcher.setChecked(Preference.sServiceRunning);
         switcher.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton view, boolean isChecked) {
                 if (isChecked) {
-                    startService(new Intent(PreferenceActivity.this, NightlyServices.class));
-                    Preference.sServiceRunning = true;
+                    startService(new Intent(PreferenceActivity.this, NightlyService.class));
+                    MobclickAgent.onEvent(PreferenceActivity.this, "start_service");
                 } else {
-                    Preference.sServiceRunning = false;
-                    stopService(new Intent(PreferenceActivity.this, NightlyServices.class));
+                    MobclickAgent.onEvent(PreferenceActivity.this, "stop_service");
+                    stopService(new Intent(PreferenceActivity.this, NightlyService.class));
                 }
-
             }
         });
-        switcher.setChecked(Preference.sServiceRunning);
 
         ListView listView = (ListView) findViewById(R.id.nighlty_listview);
         listView.setAdapter(mPreferenceAdapter);
         listView.setOnItemClickListener(this);
+
+        // upload umeng analysis data
+        MobclickAgent.updateOnlineConfig(this);
+        registerReceiver(mPreferenceChangedReveicer, new IntentFilter(Constant.BDC_SWITCH_MODE));
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        PreferenceConfig.onPreferenceChanged(this);
+    public void onPause() {
+        super.onPause();
+        Preference.save(this);
     }
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mPreferenceChangedReveicer);
         Preference.sActivityRunning = false;
         Preference.save(this);
-        PreferenceConfig.destory();
-        PreferenceConfig.onPreferenceChanged(this);
-        super.onDestroy();
+        PreferenceConfig.destroy();
     }
 
     @Override
@@ -86,10 +109,12 @@ public class PreferenceActivity extends Activity implements OnItemClickListener 
         int targetId = itemHolder.getTargetId();
         switch (targetId) {
             case Constant.TAG_ID_MODE: {
+                MobclickAgent.onEvent(this, "main_change_mode");
                 configureNightMode();
                 break;
             }
             case Constant.TAG_ID_ALPHA: {
+                MobclickAgent.onEvent(this, "main_change_alpha");
                 configureMatteAlpha();
                 break;
             }
@@ -101,6 +126,8 @@ public class PreferenceActivity extends Activity implements OnItemClickListener 
                 break;
             }
             case Constant.TAG_ID_WHITE_LIST: {
+                MobclickAgent.onEvent(this, "main_set_white_list");
+                startActivity(new Intent(this, AppSelectActivity.class));
                 break;
             }
             case Constant.TAG_ID_FEEDBACK: {
@@ -115,7 +142,8 @@ public class PreferenceActivity extends Activity implements OnItemClickListener 
     private void configureNightMode() {
         CustomDialog nightModeDialog = new CustomDialog(this);
         ListView listView = (ListView) LayoutInflater.from(this).inflate(R.layout.nightly_listview, null);
-        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.nightly_radio_check, getResources().getStringArray(R.array.night_mode)));
+        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.nightly_radio_check,
+                getResources().getStringArray(R.array.night_mode)));
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setItemChecked(Preference.sNightlyMode >> Constant.MODE_MASK, true);
         listView.setPadding(0, 0, 0, 0);
@@ -124,8 +152,8 @@ public class PreferenceActivity extends Activity implements OnItemClickListener 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Preference.sNightlyMode = (int) Math.pow(2, position);
                 mPreferenceAdapter.notifyDataSetChanged();
-                Preference.saveKey(view.getContext(), Constant.KEY_SERVICES_NIGHTLY_MODE, Integer.valueOf(Preference.sNightlyMode));
-                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this);
+                Preference.saveKey(view.getContext(), Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
+                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_MODE);
             }
         });
 
@@ -137,17 +165,59 @@ public class PreferenceActivity extends Activity implements OnItemClickListener 
 
     private void configureMatteAlpha() {
         CustomDialog alphaSetterDialog = new CustomDialog(this);
+
+        Rect padding = Utils.getNinePadding(this, R.drawable.dialog_full_holo_dark);
+        int[] size = Utils.getScreenSize(getWindowManager());
+        int dialogWidth = size[0] - (padding.left + padding.right) * 2;
+        if (dialogWidth <= 0) {
+            dialogWidth = LayoutParams.MATCH_PARENT;
+        }
+
         View view = LayoutInflater.from(this).inflate(R.layout.nightly_seekbar_layout, null);
         alphaSetterDialog.setTitle(getString(R.string.preference_mask_alpha));
-        alphaSetterDialog.setContentView(view, new LayoutParams(720, LayoutParams.WRAP_CONTENT));
+        alphaSetterDialog.setContentView(view, new LayoutParams(dialogWidth, LayoutParams.WRAP_CONTENT));
         alphaSetterDialog.setRightBtn(getString(R.string.opsbtn_right), null);
         alphaSetterDialog.setLeftBtn(getString(R.string.opsbtn_default), new OnOpsBtnClickListener() {
 
             @Override
             public void onClick(View opsBtn) {
                 // Reset to default
+                Preference.sMatteAlpha = Constant.DEFAULT_ALPHA;
             }
         });
+
+        SeekBar bar = (SeekBar) view.findViewById(R.id.nightly_alpha_seekbar);
+        bar.setMax(100);
+        bar.setProgress((int) ((Preference.sMatteAlpha - 0.1f) * 100 / 0.8f));
+        bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Preference.sMatteAlpha = 0.1f + (0.8f * progress / 100f);
+                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_ALPHA);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //Ignore
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //Ignore
+            }
+        });
+
+        final float cacheAlpha = Preference.sMatteAlpha;
+        alphaSetterDialog.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (cacheAlpha != Preference.sMatteAlpha) {
+                    mPreferenceAdapter.notifyDataSetChanged();
+                    Preference.saveKey(PreferenceActivity.this, Constant.KEY_MATTE_LAYER_ALPHA, Preference.sMatteAlpha);
+                }
+            }
+        });
+
         alphaSetterDialog.show();
     }
 

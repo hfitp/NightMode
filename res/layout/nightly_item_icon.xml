@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingTop="@dimen/default_padding"
+    android:paddingBottom="@dimen/default_padding"
+    android:focusable="false"
+    android:clickable="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/nighlty_item_icon"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_launcher"
+        android:layout_centerVertical="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"/>
+
+    <TextView
+        android:layout_toRightOf="@id/nighlty_item_icon"
+        android:layout_alignTop="@id/nighlty_item_icon"
+        android:layout_marginLeft="@dimen/default_padding"
+        android:layout_toLeftOf="@+id/nightly_checkbox"
+        android:id="@+id/item_label"
+        style="@style/item_label_text"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:layout_toRightOf="@id/nighlty_item_icon"
+        android:layout_marginLeft="@dimen/default_padding"
+        android:layout_below="@id/item_label"
+        android:layout_toLeftOf="@+id/nightly_checkbox"
+        android:id="@+id/item_explain"
+        style="@style/item_explain_text"/>
+
+    <CheckBox
+        android:id="@+id/nightly_checkbox"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:layout_marginLeft="@dimen/default_padding"
+        android:background="@drawable/checkbox_drawable"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:button="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:gravity="center"/>
 
 </RelativeLayout>

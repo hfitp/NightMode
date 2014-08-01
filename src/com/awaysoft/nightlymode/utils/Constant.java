@@ -34,7 +34,7 @@ public class Constant {
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final float DEFAULT_ALPHA = 0.6F;
     public static final String DEFAULT_TIMEBUCKETS = "20:00|06:30";
-    public static final String DEFAULT_WHITELIST = "me.imid.fuubo|com.google.android.apps.currents|com.tencent.mobileqq";
+    public static final String DEFAULT_WHITELIST = "com.awaysoft.nightlymode".hashCode() + "";
 
     /** Preference settings key */
     public static final String KEY_SERVICES_RUNNING = "service_is_running";

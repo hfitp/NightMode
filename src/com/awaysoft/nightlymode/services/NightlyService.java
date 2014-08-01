@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
 import com.awaysoft.nightlymode.widget.ControllerWidget;
 import com.awaysoft.nightlymode.widget.MatteLayer;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Background service for auto-nightly
@@ -68,9 +70,6 @@ public class NightlyService extends Service implements Callback {
         mHandler = new Handler(getMainLooper(), this);
         mGlobalWindow = (WindowManager) getSystemService(WINDOW_SERVICE);
 
-        mMatteLayer = new MatteLayer(this);
-        mMatteLayer.attachToWindows(mGlobalWindow);
-
         mFloatController = new ControllerWidget(this);
         mFloatController.bindHandler(mHandler);
 
@@ -84,12 +83,9 @@ public class NightlyService extends Service implements Callback {
 
         Toast.makeText(this, getString(R.string.service_started), Toast.LENGTH_SHORT).show();
         Preference.read(this);
-        Preference.parseWhiteList();
         Preference.sServiceRunning = true;
 
-        if (Preference.sNightlyMode == Constant.MODE_AUTO) {
-            startMonitor();
-        }
+        startMonitor();
 
         if (Preference.sFloatWidget) {
             mFloatController.attachToWindow(mGlobalWindow);
@@ -108,11 +104,15 @@ public class NightlyService extends Service implements Callback {
         mTopApp = name.getPackageName();
         switchMode(mTopApp);
 
+        // for umeng sdk
+        MobclickAgent.onResume(this);
+
         return Service.START_STICKY;
     }
 
     @Override
     public void onDestroy() {
+        Preference.sServiceRunning = false;
         // Unregister preference monitor receiver
         unregisterReceiver(mPreferenceReceiver);
 
@@ -126,34 +126,37 @@ public class NightlyService extends Service implements Callback {
 
         if (mFloatController != null) {
             mFloatController.detachFromWindow();
+            mFloatController = null;
         }
 
         Preference.save(this);
         stopForeground(true);
         super.onDestroy();
         Toast.makeText(this, getString(R.string.service_stoped), Toast.LENGTH_SHORT).show();
+
+        // for umeng sdk
+        MobclickAgent.onPause(this);
     }
 
     private class AppMonitor extends Thread {
-        private Boolean sStoped = false;
+        private volatile Boolean mNeedStop = false;
+        private String mLastApp;
 
         @Override
         public void run() {
             ComponentName name;
-            while (!sStoped) {
+            while (!mNeedStop) {
                 try {
-                    name = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1).get(
-                            0).topActivity;
-                    String cacheStr = name.getPackageName();
-
-                    if (!mTopApp.equals(cacheStr)) {
-                        mTopApp = cacheStr;
+                    name = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1).get(0).topActivity;
+                    String tmp = name.getPackageName();
+                    if (!TextUtils.equals(mLastApp, tmp) && !mNeedStop) {
                         Message msg = Message.obtain(mHandler);
                         msg.what = Constant.MSG_UPDATE_APP_INFO;
-                        msg.obj = cacheStr;
+                        msg.obj = tmp;
                         mHandler.sendMessage(msg);
                     }
 
+                    mLastApp = tmp;
                     sleep(100);
                 } catch (Exception e) {
                     // do nothing
@@ -166,34 +169,34 @@ public class NightlyService extends Service implements Callback {
     private void startMonitor() {
         if (mAppMonitor == null || !mAppMonitor.isAlive()) {
             if (mAppMonitor != null) {
-                mAppMonitor.sStoped = true;
+                mAppMonitor.mNeedStop = true;
             }
 
             mAppMonitor = new AppMonitor();
-            mAppMonitor.sStoped = false;
+            mAppMonitor.mNeedStop = false;
             mAppMonitor.start();
         }
     }
 
     private void stopMonitor() {
         if (mAppMonitor != null) {
-            mAppMonitor.sStoped = true;
+            mAppMonitor.mNeedStop = true;
         }
     }
 
     @SuppressWarnings("deprecation")
     private void startForeground() {
         Notification mNotification = new Notification(R.drawable.night_notification_icon,
-                                                      getText(R.string.nightly_title), System.currentTimeMillis());
+                getText(R.string.nightly_title), System.currentTimeMillis());
         Intent notificationIntent = new Intent(this, PreferenceActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mNotification.setLatestEventInfo(this, getText(R.string.nightly_title),
-                                         getText(R.string.night_notification_tips), pendingIntent);
+                getText(R.string.night_notification_tips), pendingIntent);
         startForeground(mNotification.hashCode(), mNotification);
     }
 
     private void switchMode(String pkgName) {
-        if ("stop".equals(pkgName)) {
+        if ("stop".equals(pkgName) || "com.android.packageinstaller".equals(pkgName)) {
             mMatteLayer.matteSmoothOut();
         } else {
             switch (Preference.sNightlyMode) {
@@ -219,17 +222,15 @@ public class NightlyService extends Service implements Callback {
         switch (msg.what) {
             // Top application changed
             case Constant.MSG_UPDATE_APP_INFO: {
-                switchMode((String) msg.obj);
+                if (msg.obj instanceof String) {
+                    mTopApp = (String) msg.obj;
+                    switchMode(mTopApp);
+                }
                 break;
             }
             // Night mode changed
             case Constant.MSG_STATUS_CHANGED: {
-                if (Preference.sNightlyMode == Constant.MODE_AUTO) {
-                    startMonitor();
-                } else {
-                    stopMonitor();
-                }
-
+                mFloatController.onStatusChanged();
                 switchMode(mTopApp);
                 Preference.saveKey(this, Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
                 break;
@@ -254,20 +255,11 @@ public class NightlyService extends Service implements Callback {
     }
 
     private void onPreferenceChanged(int tag) {
-
-        Log.d("NightService", "");
-
-        if (!Preference.sActivityRunning && tag != -1) {
+        if (Preference.sActivityRunning && tag != -1) {
             switch (tag) {
                 case Constant.TAG_ID_MODE: {
-                    if (Preference.sFloatWidget) {
-                        mFloatController.attachToWindow(mGlobalWindow);
-                    } else {
-                        mFloatController.detachFromWindow();
-                    }
-
                     mHandler.sendEmptyMessage(Constant.MSG_STATUS_CHANGED);
-                    return;
+                    break;
                 }
 
                 case Constant.TAG_ID_ALPHA: {
@@ -285,6 +277,15 @@ public class NightlyService extends Service implements Callback {
                         startForeground();
                     } else {
                         stopForeground(true);
+                    }
+                    break;
+                }
+
+                case Constant.TAG_ID_FLOATWIDGET: {
+                    if (Preference.sFloatWidget) {
+                        mFloatController.attachToWindow(mGlobalWindow);
+                    } else {
+                        mFloatController.detachFromWindow();
                     }
                     break;
                 }

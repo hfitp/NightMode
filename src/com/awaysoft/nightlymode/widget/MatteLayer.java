@@ -3,6 +3,7 @@ package com.awaysoft.nightlymode.widget;
 
 import com.awaysoft.nightlymode.utils.AnimHelper;
 import com.awaysoft.nightlymode.utils.AnimListener;
+import com.awaysoft.nightlymode.utils.Preference;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -37,7 +38,7 @@ public class MatteLayer extends FrameLayout {
         mMatteView = new View(getContext());
         mMatteView.setVisibility(INVISIBLE);
         addView(mMatteView);
-        setMatteAlpha(0.6F);
+        setMatteAlpha(Preference.sMatteAlpha);
     }
 
     private WindowManager.LayoutParams generateWindowLayoutParams() {
@@ -60,20 +61,22 @@ public class MatteLayer extends FrameLayout {
     }
 
     public void attachToWindows(WindowManager window) {
-        detachFromWindow();
-        mAttachedWindow = window;
-        WindowManager.LayoutParams lParams = generateWindowLayoutParams();
-        mAttachedWindow.addView(this, lParams);
+        if (getParent() == null) {
+            mAttachedWindow = window;
+            WindowManager.LayoutParams lParams = generateWindowLayoutParams();
+            mAttachedWindow.addView(this, lParams);
+        }
     }
 
     public void detachFromWindow() {
-        if (mAttachedWindow != null) {
+        if (mAttachedWindow != null && getParent() != null) {
             mAttachedWindow.removeView(this);
         }
     }
 
     public void matteSmoothIn() {
         if (mMatteView.getVisibility() != VISIBLE) {
+            attachToWindows(mAttachedWindow);
             AnimHelper.matteSmoothIn(mMatteView, new AnimListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
@@ -89,6 +92,7 @@ public class MatteLayer extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mMatteView.setVisibility(INVISIBLE);
+                    detachFromWindow();
                 }
             });
         }

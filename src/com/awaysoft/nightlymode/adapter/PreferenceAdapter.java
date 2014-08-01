@@ -46,7 +46,7 @@ public class PreferenceAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
-        View view = null;
+        View view;
 
         if (convertView != null && convertView.getTag() instanceof Integer
                 && type == (Integer) convertView.getTag()) {

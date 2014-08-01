@@ -2,6 +2,7 @@
 package com.awaysoft.nightlymode.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,23 +38,25 @@ public final class Preference {
     /** Auto night white list */
     public static String sWhiteList = Constant.DEFAULT_WHITELIST;
     /** Memory white list pool */
-    private static ArrayList<String> sWhiteListPool = new ArrayList<String>();
+    private static ArrayList<Integer> sWhiteListPool = new ArrayList<Integer>();
 
     public static void save(Context context) {
-        saveKey(context, Constant.KEY_MATTE_LAYER_COLOR, Integer.valueOf(sMatteColor));
-        saveKey(context, Constant.KEY_MATTE_LAYER_ALPHA, Float.valueOf(sMatteAlpha));
+        saveKey(context, Constant.KEY_MATTE_LAYER_COLOR, sMatteColor);
+        saveKey(context, Constant.KEY_MATTE_LAYER_ALPHA, sMatteAlpha);
 
-        saveKey(context, Constant.KEY_SERVICES_RUNNING, Boolean.valueOf(sServiceRunning));
-        saveKey(context, Constant.KEY_SERVICES_NIGHTLY_MODE, Integer.valueOf(sNightlyMode));
-        saveKey(context, Constant.KEY_SERVICES_AUTOSTART, Boolean.valueOf(sAutoStart));
-        saveKey(context, Constant.KEY_SERVICES_SHOW_NOTIFICATON, Boolean.valueOf(sNotification));
-        saveKey(context, Constant.KEY_SERVICES_SHOW_FLOAT_WIDGET, Boolean.valueOf(sFloatWidget));
+        saveKey(context, Constant.KEY_SERVICES_RUNNING, sServiceRunning);
+        saveKey(context, Constant.KEY_SERVICES_NIGHTLY_MODE, sNightlyMode);
+        saveKey(context, Constant.KEY_SERVICES_AUTOSTART, sAutoStart);
+        saveKey(context, Constant.KEY_SERVICES_SHOW_NOTIFICATON, sNotification);
+        saveKey(context, Constant.KEY_SERVICES_SHOW_FLOAT_WIDGET, sFloatWidget);
 
-        saveKey(context, Constant.KEY_NIGHLTY_FOR_ALLAPP, Boolean.valueOf(sApplyAll));
+        saveKey(context, Constant.KEY_NIGHLTY_FOR_ALLAPP, sApplyAll);
         saveKey(context, Constant.KEY_NIGHTLY_TIMEBUCKETS, sTimeBuckets);
-        saveKey(context, Constant.KEY_NIGHTLY_WHITE_LIST, sWhiteList);
 
         saveKey(context, Constant.KEY_FLOAT_WIDGET_LOCATION, sFloatLocation);
+
+        convertWhiteList();
+        saveKey(context, Constant.KEY_NIGHTLY_WHITE_LIST, sWhiteList);
     }
 
     public static void read(Context context) {
@@ -70,9 +73,11 @@ public final class Preference {
 
         sApplyAll = sp.getBoolean(Constant.KEY_NIGHLTY_FOR_ALLAPP, false);
         sTimeBuckets = sp.getString(Constant.KEY_NIGHTLY_TIMEBUCKETS, Constant.DEFAULT_TIMEBUCKETS);
-        sWhiteList = sp.getString(Constant.KEY_NIGHTLY_WHITE_LIST, Constant.DEFAULT_WHITELIST);
 
         sFloatLocation = sp.getString(Constant.KEY_FLOAT_WIDGET_LOCATION, "");
+
+        sWhiteList = sp.getString(Constant.KEY_NIGHTLY_WHITE_LIST, Constant.DEFAULT_WHITELIST);
+        parseWhiteList();
     }
 
     public static void saveKey(Context context, String key, Object value) {
@@ -89,16 +94,43 @@ public final class Preference {
     }
 
     public static boolean inWhiteList(String pkg) {
-        return sWhiteListPool.contains(pkg);
+        return sWhiteListPool.contains(pkg.hashCode());
     }
 
-    public static void parseWhiteList() {
+    private static void parseWhiteList() {
         if (!TextUtils.isEmpty(sWhiteList)) {
             sWhiteListPool.clear();
             String[] array = sWhiteList.split("\\|");
-            for (int i = 0; i < array.length; ++i) {
-                sWhiteListPool.add(array[i]);
+            for (String key : array) {
+                sWhiteListPool.add(Integer.valueOf(key));
             }
+        }
+    }
+
+    private static void convertWhiteList() {
+        if (sWhiteListPool != null) {
+            StringBuilder sb = new StringBuilder();
+            for (Integer key : sWhiteListPool) {
+                if (key != null) {
+                    sb.append(key).append("|");
+                }
+            }
+
+            sWhiteList = sb.toString();
+        }
+    }
+
+    public static void enableInWhiteList(String pkg, boolean enable) {
+        if (TextUtils.isEmpty(pkg)) {
+            return;
+        }
+
+        if (enable) {
+            if (!inWhiteList(pkg)) {
+                sWhiteListPool.add(pkg.hashCode());
+            }
+        } else {
+            sWhiteListPool.remove(Integer.valueOf(pkg.hashCode()));
         }
     }
 

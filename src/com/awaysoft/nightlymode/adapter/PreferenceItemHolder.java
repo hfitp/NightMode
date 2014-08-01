@@ -25,7 +25,7 @@ public class PreferenceItemHolder {
     public static final int ITEM_TYPE_CHECKBOX = 0X0003; // check box
     public static final int ITEM_TYPE_COUNT = 0X0004; // count
 
-    private final int[] sLayoutId = new int[] {
+    private static final int[] sLayoutId = new int[]{
             R.layout.nightly_item_explain,
             R.layout.nightly_item_class,
             R.layout.nightly_item_switcher,
@@ -45,12 +45,12 @@ public class PreferenceItemHolder {
     private Context mContext;
     private OnCheckedChangeListener mCheckBoxListener;
 
-    private void newCheckBoxListener() {
+    private OnCheckedChangeListener newCheckBoxListener() {
         if (mCheckBoxListener == null) {
             mCheckBoxListener = new OnCheckedChangeListener() {
 
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                public void onCheckedChanged(CompoundButton view, boolean isChecked) {
                     switch (targetItemId) {
                         case Constant.TAG_ID_GLOBAL:
                             Preference.sApplyAll = isChecked;
@@ -68,10 +68,12 @@ public class PreferenceItemHolder {
                             return;
                     }
 
-                    PreferenceConfig.onPreferenceChanged(buttonView.getContext());
+                    PreferenceConfig.onPreferenceChanged(view.getContext(), targetItemId);
                 }
             };
         }
+
+        return mCheckBoxListener;
     }
 
     public PreferenceItemHolder(int type, int labelResId, int explainResId, int targetItemId) {
@@ -85,7 +87,7 @@ public class PreferenceItemHolder {
     public View obtainView(Context context) {
         mContext = context;
         sModesId = mContext.getResources().getStringArray(R.array.night_mode);
-        View view = null;
+        View view;
         try {
             view = LayoutInflater.from(context).inflate(layoutResId, null);
         } catch (Exception e) {
@@ -96,21 +98,11 @@ public class PreferenceItemHolder {
             view.setBackgroundResource(R.drawable.list_item_drawable);
         }
 
-        view.setTag(Integer.valueOf(targetItemId));
+        view.setTag(targetItemId);
 
         Resources res = context.getResources();
         view.setPadding(res.getDimensionPixelSize(R.dimen.nightly_listitem_padding), 0,
                 res.getDimensionPixelSize(R.dimen.nightly_listitem_padding), 0);
-
-        if (type == ITEM_TYPE_CHECKBOX) {
-            newCheckBoxListener();
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.nightly_checkbox);
-            checkBox.setOnCheckedChangeListener(mCheckBoxListener);
-        } else if (type == ITEM_TYPE_SWITCHER) {
-            newCheckBoxListener();
-            Switch switcher = (Switch) view.findViewById(R.id.nightly_switch);
-            switcher.setOnCheckedChangeListener(mCheckBoxListener);
-        }
 
         return view;
     }
@@ -184,6 +176,7 @@ public class PreferenceItemHolder {
             if (targetItemId == Constant.TAG_ID_GLOBAL) {
                 checkBox.setChecked(Preference.sApplyAll);
             }
+            checkBox.setOnCheckedChangeListener(newCheckBoxListener());
         } else if (type == ITEM_TYPE_SWITCHER) {
             Switch switcher = (Switch) view.findViewById(R.id.nightly_switch);
             boolean status = false;
@@ -199,6 +192,7 @@ public class PreferenceItemHolder {
                     break;
             }
             switcher.setChecked(status);
+            switcher.setOnCheckedChangeListener(newCheckBoxListener());
         }
     }
 
@@ -212,23 +206,17 @@ public class PreferenceItemHolder {
             case Constant.TAG_ID_MODE:
                 return sModesId[Preference.sNightlyMode >> Constant.MODE_MASK];
             case Constant.TAG_ID_ALPHA: {
-                sb.append(", ");
-                sb.append(mContext.getString(R.string.current_string));
-                sb.append("=");
-                sb.append(Preference.sMatteAlpha);
+                sb.append(", ").append(mContext.getString(R.string.current_string)).append("=");
+                sb.append(Math.round(Preference.sMatteAlpha * 100)).append("%");
                 break;
             }
             case Constant.TAG_ID_COLOR: {
-                sb.append(", ");
-                sb.append(mContext.getString(R.string.current_string));
-                sb.append("=#");
+                sb.append(", ").append(mContext.getString(R.string.current_string)).append("=#");
                 sb.append(Integer.toHexString(Preference.sMatteColor));
                 break;
             }
             case Constant.TAG_ID_AUTO_TIME: {
-                sb.append(", ");
-                sb.append(mContext.getString(R.string.current_string));
-                sb.append(": ");
+                sb.append(", ").append(mContext.getString(R.string.current_string)).append(": ");
                 sb.append(Preference.sTimeBuckets.replaceAll("\\|", " ~ "));
                 break;
             }

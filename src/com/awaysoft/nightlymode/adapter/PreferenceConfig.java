@@ -2,6 +2,7 @@
 package com.awaysoft.nightlymode.adapter;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +22,7 @@ public class PreferenceConfig {
         sPreferenceItems = new ArrayList<PreferenceItemHolder>();
     }
 
-    public static final void build(Context context) {
+    public static void build(Context context) {
         sPreferenceItems.clear();
         {
             /** Preference classify */
@@ -35,45 +36,46 @@ public class PreferenceConfig {
 
             /** AutoNightly classify */
             sPreferenceItems.add(new PreferenceItemHolder(HEADER, R.string.auto_nightly, -1, -1));
-            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_time_buckets, R.string.auto_nightly_time_tips, Constant.TAG_ID_AUTO_TIME));
+            //sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_time_buckets, R.string.auto_nightly_time_tips, Constant.TAG_ID_AUTO_TIME));
             //sPreferenceItems.add(new PreferenceItemHolder(CHECKBOX, R.string.auto_nightly_for_all, R.string.auto_nightly_for_all_tips, Constant.TAG_ID_GLOBAL));
-            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_white_list, -1, Constant.TAG_ID_WHITE_LIST));
+            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_white_list, R.string.auto_nightly_white_list_tips, Constant.TAG_ID_WHITE_LIST));
 
             /** Information classify */
             sPreferenceItems.add(new PreferenceItemHolder(HEADER, R.string.information, -1, -1));
             sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.information_feedback, R.string.information_feedback_email, Constant.TAG_ID_FEEDBACK));
-            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.information_about, R.string.information_about_author, Constant.TAG_ID_ABOUT));
+            //sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.information_about, R.string.information_about_author, Constant.TAG_ID_ABOUT));
         }
     }
 
-    public static final void destory() {
+    public static void destroy() {
         if (sPreferenceItems != null) {
             sPreferenceItems.clear();
         }
     }
 
-    public static final PreferenceItemHolder get(int position) {
+    public static PreferenceItemHolder get(int position) {
         return sPreferenceItems.get(position);
     }
 
-    public static final int getCount() {
+    public static int getCount() {
         return sPreferenceItems.size();
     }
 
-    public static final int getTypeCount() {
+    public static int getTypeCount() {
         return PreferenceItemHolder.ITEM_TYPE_COUNT;
     }
 
-    public static final boolean isEnable(int position) {
+    public static boolean isEnable(int position) {
         return sPreferenceItems.get(position).isEnable();
     }
 
-    public static final View getView(Context context, int position) {
+    public static View getView(Context context, int position) {
         return sPreferenceItems.get(position).obtainView(context);
     }
 
-    public static void onPreferenceChanged(Context context) {
+    public static void onPreferenceChanged(Context context, int tag) {
         Intent intent = new Intent(Constant.BDC_PREFERENCE_CHENGED);
+        intent.putExtra(Constant.PREFERENCE_TARGET_KEY, tag);
         context.sendBroadcast(intent);
     }
 }

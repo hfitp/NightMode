@@ -2,10 +2,11 @@
 package com.awaysoft.nightlymode.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -24,6 +25,7 @@ import com.awaysoft.nightlymode.utils.AnimListener;
 import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
 import com.awaysoft.nightlymode.utils.Utils;
+import com.umeng.analytics.MobclickAgent;
 
 public class ControllerWidget extends FrameLayout implements OnClickListener, OnLongClickListener {
     private static final int FLAG_NORMAL = 1;
@@ -31,7 +33,8 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
     private static final int FLAG_MOVING = 4;
 
     private int mFlag;
-    private Point mDislay;
+    private int mCacheMode;
+    private Point mDisplay;
     private Point mPointer;
     private Handler mHandler;
     private ImageView mFlagIcon;
@@ -39,8 +42,10 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
     private WindowManager mAttachedWindow;
     private WindowManager.LayoutParams mWLParams;
 
-    private static final int[] sIcon = new int[] {
-            R.drawable.flag_auto, R.drawable.flag_night, R.drawable.flag_normal
+    private static final int[] sIcon = new int[]{
+            R.drawable.flag_auto,
+            R.drawable.flag_night,
+            R.drawable.flag_normal
     };
 
     public ControllerWidget(Context context) {
@@ -62,18 +67,26 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
 
     private void initialize() {
         mFlag = FLAG_NORMAL;
-        mDislay = new Point();
+        mDisplay = new Point();
         mPointer = new Point();
 
         mFlagIconCache = new ImageView(getContext());
-        mFlagIconCache.setAlpha(0.5F);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mFlagIconCache.setAlpha(0.5F);
+        }
+
         LayoutParams fLParams = new LayoutParams(48, 48);
         fLParams.gravity = Gravity.CENTER;
         addView(mFlagIconCache, fLParams);
         mFlagIconCache.setVisibility(View.GONE);
 
         mFlagIcon = new ImageView(getContext());
-        mFlagIcon.setAlpha(0.5F);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mFlagIconCache.setAlpha(0.5F);
+        }
+
         fLParams = new LayoutParams(48, 48);
         fLParams.gravity = Gravity.CENTER;
         addView(mFlagIcon, fLParams);
@@ -86,15 +99,15 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
     public void attachToWindow(WindowManager window) {
         if (!isShown()) {
             mAttachedWindow = window;
-            int[] tmp = Utils.getScrenSize(window);
-            mDislay.set(tmp[0], tmp[1]);
+            int[] tmp = Utils.getScreenSize(window);
+            mDisplay.set(tmp[0], tmp[1]);
             mWLParams = generateWindowLayoutParams();
             mWLParams.width = 96;
             mWLParams.height = 96;
             mWLParams.gravity = Gravity.TOP | Gravity.LEFT;
 
             if (TextUtils.isEmpty(Preference.sFloatLocation)) {
-                mWLParams.x = mDislay.x - 96;
+                mWLParams.x = mDisplay.x - 96;
                 mWLParams.y = 4 * 96;
             } else {
                 String[] loc = Preference.sFloatLocation.split("\\|");
@@ -109,7 +122,7 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
         }
     }
 
-    public void updateLoaction(int dx, int dy) {
+    public void updateLocation(int dx, int dy) {
         if (mAttachedWindow != null) {
             mWLParams.x += dx;
             mWLParams.y += dy;
@@ -147,7 +160,7 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
             case MotionEvent.ACTION_MOVE:
                 if ((mFlag ^ FLAG_NORMAL) != 0) {
                     mFlag = FLAG_MOVING;
-                    updateLoaction(x - mPointer.x, y - mPointer.y);
+                    updateLocation(x - mPointer.x, y - mPointer.y);
                     mPointer.set(x, y);
                 }
 
@@ -164,31 +177,26 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
         return super.onTouchEvent(event);
     }
 
-    private void onStatusChanged() {
-        AnimHelper.statusFlagSmoothOut(mFlagIcon, new AnimListener() {
+    public void onStatusChanged() {
+        mFlagIcon.clearAnimation();
+        AnimHelper.statusFlagSmoothIn(mFlagIcon, new AnimListener() {
             @Override
-            public void onAnimationEnd(Animation animation) {
-                mFlagIconCache.setVisibility(View.GONE);
-                mFlagIconCache.postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        mFlagIconCache.setImageResource(sIcon[switchStatus(Preference.sNightlyMode) >> Constant.MODE_MASK]);
-                    }
-                }, 10);
-
-                // notify service
-                Message msg = Message.obtain(mHandler);
-                msg.what = Constant.MSG_STATUS_CHANGED;
-                mHandler.sendMessage(msg);
+            public void onAnimationStart(Animation animation) {
+                mFlagIcon.setImageResource(sIcon[Preference.sNightlyMode >> Constant.MODE_MASK]);
             }
         });
 
-        mFlagIconCache.setVisibility(View.VISIBLE);
-        AnimHelper.statusFlagSmoothIn(mFlagIconCache, new AnimListener() {
+        mFlagIconCache.clearAnimation();
+        AnimHelper.statusFlagSmoothOut(mFlagIconCache, new AnimListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mFlagIconCache.setVisibility(View.VISIBLE);
+                mFlagIconCache.setImageResource(sIcon[mCacheMode >> Constant.MODE_MASK]);
+            }
+
             @Override
             public void onAnimationEnd(Animation animation) {
-                mFlagIcon.setImageResource(sIcon[Preference.sNightlyMode >> Constant.MODE_MASK]);
+                mFlagIconCache.setVisibility(GONE);
             }
         });
     }
@@ -216,8 +224,11 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
         if (mFlag == FLAG_MENU) {
             mFlag >>= Constant.MODE_MASK;
         } else {
+            mCacheMode = Preference.sNightlyMode;
             Preference.sNightlyMode = switchStatus(Preference.sNightlyMode);
-            onStatusChanged();
+            mHandler.sendEmptyMessage(Constant.MSG_STATUS_CHANGED);
+            getContext().sendBroadcast(new Intent(Constant.BDC_SWITCH_MODE));
+            MobclickAgent.onEvent(getContext(), "float_change_mode");
         }
     }
 }

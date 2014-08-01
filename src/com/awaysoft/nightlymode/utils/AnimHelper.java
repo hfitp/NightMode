@@ -14,7 +14,7 @@ import android.view.animation.TranslateAnimation;
  */
 public class AnimHelper {
 
-    public static final void matteSmoothIn(final View trackMatteView, AnimListener listener) {
+    public static void matteSmoothIn(final View trackMatteView, AnimListener listener) {
         if (trackMatteView == null || trackMatteView.getParent() == null) {
             return;
         } else {
@@ -38,7 +38,7 @@ public class AnimHelper {
         });
     }
 
-    public static final void matteSmoothOut(final View trackMatteView, AnimListener listener) {
+    public static void matteSmoothOut(final View trackMatteView, AnimListener listener) {
         if (trackMatteView == null || trackMatteView.getParent() == null) {
             return;
         } else {
@@ -62,7 +62,7 @@ public class AnimHelper {
         });
     }
 
-    public static final void statusFlagSmoothIn(final View view, AnimListener listener) {
+    public static void statusFlagSmoothIn(final View view, AnimListener listener) {
         if (view == null || view.getParent() == null) {
             return;
         }
@@ -80,7 +80,7 @@ public class AnimHelper {
         view.startAnimation(anim);
     }
 
-    public static final void statusFlagSmoothOut(final View view, AnimListener listener) {
+    public static void statusFlagSmoothOut(final View view, AnimListener listener) {
         if (view == null || view.getParent() == null) {
             return;
         }

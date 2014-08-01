@@ -20,7 +20,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
             Preference.read(context);
 
             if (Preference.sAutoStart) {
-                context.startService(new Intent(context, NightlyServices.class));
+                context.startService(new Intent(context, NightlyService.class));
             }
         }
     }
