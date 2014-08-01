@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="switcher_open">ON</string>
+    <string name="switcher_close">OFF</string>
+    <string name="opsbtn_left">Cancel</string>
+    <string name="opsbtn_right">Okay</string>
+    <string name="opsbtn_default">Default</string>
+
+</resources>

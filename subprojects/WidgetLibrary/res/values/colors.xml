@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="switcher_unselected">#7f7f7f7f</color>
+    <color name="switcher_selected">#ffffff</color>
+    <color name="switcher_disable">#5f5f5f5f</color>
+    <color name="text_blue">#0099cc</color>
+    <color name="text_white">#efefef</color>
+    <color name="common_bg">#272727</color>
+
+</resources>

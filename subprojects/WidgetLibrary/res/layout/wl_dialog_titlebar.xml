@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.awaysoft.widget.component.ActionBar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:actionBar="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialg_actionbar"
+    style="@style/ActionBarTitleText"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bar_height"
+    actionBar:titleTextColor="@color/text_blue"
+    android:background="@drawable/action_bar_dark"
+    android:gravity="center_vertical"
+    android:paddingRight="10dip" />

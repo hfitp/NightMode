@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="switcher_open">开启</string>
+    <string name="switcher_close">关闭</string>
+    <string name="opsbtn_left">取消</string>
+    <string name="opsbtn_right">确定</string>
+    <string name="opsbtn_default">重置</string>
+
+</resources>
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ops_button"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bar_height"
+    android:orientation="horizontal" >
+
+    <Button
+        android:id="@+id/ops_left_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:background="@drawable/opsbtn_bg_drawable"
+        android:text="@string/opsbtn_left"
+        android:textColor="#efefef"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/ops_split"
+        android:layout_width="1dip"
+        android:layout_height="fill_parent"
+        android:background="#303030"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/ops_right_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:background="@drawable/opsbtn_bg_drawable"
+        android:text="@string/opsbtn_right"
+        android:textColor="#efefef"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</LinearLayout>

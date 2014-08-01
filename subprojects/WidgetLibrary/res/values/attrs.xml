@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Define switch attribute -->
+    <declare-styleable name="Switch">
+        <attr name="thumbDrawable" format="reference" />
+        <attr name="trackDrawable" format="reference" />
+        <attr name="textOn" format="string" />
+        <attr name="textOff" format="string" />
+        <attr name="thumbTextPadding" format="dimension" />
+        <attr name="switchMinWidth" format="dimension" />
+        <attr name="switchPadding" format="dimension" />
+        <attr name="switchTextAppearance" format="reference" />
+    </declare-styleable>
+
+    <!-- Define actionbar attribute -->
+    <declare-styleable name="ActionBar">
+        <attr name="backable" format="boolean" />
+        <attr name="backDrawable" format="reference" />
+        <attr name="icon" format="reference" />
+        <attr name="optionLayout" format="reference" />
+        <attr name="title" format="string" />
+        <attr name="titleClickable" format="boolean" />
+        <attr name="titleBackgroud" format="reference" />
+        <attr name="titleTextAppearance" format="reference" />
+        <attr name="titleTextColor" format="color" />
+        <attr name="titleTextSize" format="dimension" />
+        <attr name="titleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+
+</resources>
