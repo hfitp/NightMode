@@ -1,6 +1,7 @@
 
 package com.awaysoft.nightlymode.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -65,6 +66,7 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
         initialize();
     }
 
+    @TargetApi(11)
     private void initialize() {
         mFlag = FLAG_NORMAL;
         mDisplay = new Point();
@@ -90,6 +92,10 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
         fLParams = new LayoutParams(48, 48);
         fLParams.gravity = Gravity.CENTER;
         addView(mFlagIcon, fLParams);
+    }
+
+    public void setAttachedWindow(WindowManager window){
+        mAttachedWindow = window;
     }
 
     public void bindHandler(Handler handler) {

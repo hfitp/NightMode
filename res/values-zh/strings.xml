@@ -50,4 +50,6 @@
 
     <string name="night_notification_tips">点击打开夜间模式设置</string>
 
+    <string name="night_alpha_min_value">10%</string>
+    <string name="night_alpha_max_value">90%</string>
 </resources>

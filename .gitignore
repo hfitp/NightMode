@@ -8,3 +8,4 @@ gen/
 .project
 .settings/org.eclipse.jdt.core.prefs
 libs/.DS_Store
+ruikye.store

@@ -15,7 +15,6 @@ import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -70,7 +69,11 @@ public class NightlyService extends Service implements Callback {
         mHandler = new Handler(getMainLooper(), this);
         mGlobalWindow = (WindowManager) getSystemService(WINDOW_SERVICE);
 
+        mMatteLayer = new MatteLayer(this);
+        mMatteLayer.setAttachedWindow(mGlobalWindow);
+
         mFloatController = new ControllerWidget(this);
+        mFloatController.setAttachedWindow(mGlobalWindow);
         mFloatController.bindHandler(mHandler);
 
         // Register preference monitor receiver

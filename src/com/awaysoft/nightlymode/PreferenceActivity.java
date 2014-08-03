@@ -41,7 +41,7 @@ import com.umeng.analytics.MobclickAgent;
 public class PreferenceActivity extends BaseActivity implements OnItemClickListener {
     private PreferenceAdapter mPreferenceAdapter;
 
-    private BroadcastReceiver mPreferenceChangedReveicer = new BroadcastReceiver() {
+    private BroadcastReceiver mPreferenceChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -84,7 +84,7 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
 
         // upload umeng analysis data
         MobclickAgent.updateOnlineConfig(this);
-        registerReceiver(mPreferenceChangedReveicer, new IntentFilter(Constant.BDC_SWITCH_MODE));
+        registerReceiver(mPreferenceChangedReceiver, new IntentFilter(Constant.BDC_SWITCH_MODE));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPreferenceChangedReveicer);
+        unregisterReceiver(mPreferenceChangedReceiver);
         Preference.sActivityRunning = false;
         Preference.save(this);
         PreferenceConfig.destroy();

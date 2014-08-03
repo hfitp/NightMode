@@ -1,12 +1,11 @@
 package com.awaysoft.nightlymode;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -16,21 +15,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.LayoutAnimationController;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awaysoft.nightlymode.utils.Preference;
 import com.awaysoft.nightlymode.utils.Utils;
 import com.awaysoft.nightlymode.widget.BaseActivity;
 import com.awaysoft.widget.component.ActionBar;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +152,7 @@ public class AppSelectActivity extends BaseActivity {
         }
 
         @Override
+        @TargetApi(11)
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ItemHolder item;
             if (convertView == null) {

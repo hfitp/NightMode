@@ -60,6 +60,10 @@ public class MatteLayer extends FrameLayout {
         mMatteView.setBackgroundColor(mMatterColor);
     }
 
+    public void setAttachedWindow(WindowManager window){
+        mAttachedWindow = window;
+    }
+
     public void attachToWindows(WindowManager window) {
         if (getParent() == null) {
             mAttachedWindow = window;

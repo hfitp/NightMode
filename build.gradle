@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         mavenCentral()
@@ -16,8 +15,31 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 17
+    compileSdkVersion 20
     buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 20
+    }
+
+    signingConfigs {
+        ruikye{
+            storeFile file(System.getenv("SIGN_STORE"))
+            storePassword System.getenv("SIGN_PWD")
+            keyAlias System.getenv("SIGN_KEY")
+            keyPassword System.getenv("SIGN_PWD")
+        }
+    }
+
+    buildTypes{
+        release {
+            zipAlign true
+            signingConfig signingConfigs.ruikye
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
 
     sourceSets {
         main {
