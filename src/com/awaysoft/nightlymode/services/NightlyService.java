@@ -38,6 +38,7 @@ public class NightlyService extends Service implements Callback {
     private MatteLayer mMatteLayer;
     private WindowManager mGlobalWindow;
     private ControllerWidget mFloatController;
+    public static boolean sIsRunning = false;
 
     // On preference changed monitor
     private BroadcastReceiver mPreferenceReceiver = new BroadcastReceiver() {
@@ -75,6 +76,8 @@ public class NightlyService extends Service implements Callback {
         mFloatController = new ControllerWidget(this);
         mFloatController.setAttachedWindow(mGlobalWindow);
         mFloatController.bindHandler(mHandler);
+
+        sIsRunning = true;
 
         // Register preference monitor receiver
         registerReceiver(mPreferenceReceiver, new IntentFilter(Constant.BDC_PREFERENCE_CHENGED));
@@ -115,6 +118,7 @@ public class NightlyService extends Service implements Callback {
 
     @Override
     public void onDestroy() {
+        sIsRunning = false;
         Preference.sServiceRunning = false;
         // Unregister preference monitor receiver
         unregisterReceiver(mPreferenceReceiver);
@@ -165,6 +169,8 @@ public class NightlyService extends Service implements Callback {
                     // do nothing
                 }
             }
+
+            sIsRunning = false;
         }
     }
 

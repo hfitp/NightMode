@@ -63,20 +63,22 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
         Preference.sActivityRunning = true;
 
         Switch switcher = (Switch) findViewById(R.id.nightly_switch);
-        switcher.setChecked(Preference.sServiceRunning);
         switcher.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton view, boolean isChecked) {
                 if (isChecked) {
-                    startService(new Intent(PreferenceActivity.this, NightlyService.class));
-                    MobclickAgent.onEvent(PreferenceActivity.this, "start_service");
+                    if (!NightlyService.sIsRunning) {
+                        startService(new Intent(PreferenceActivity.this, NightlyService.class));
+                        MobclickAgent.onEvent(PreferenceActivity.this, "start_service");
+                    }
                 } else {
                     MobclickAgent.onEvent(PreferenceActivity.this, "stop_service");
                     stopService(new Intent(PreferenceActivity.this, NightlyService.class));
                 }
             }
         });
+        switcher.setChecked(Preference.sServiceRunning);
 
         ListView listView = (ListView) findViewById(R.id.nighlty_listview);
         listView.setAdapter(mPreferenceAdapter);
