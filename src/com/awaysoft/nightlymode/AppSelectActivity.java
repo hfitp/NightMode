@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2014 Ruikye's open source project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.awaysoft.nightlymode;
 
 import android.annotation.TargetApi;
@@ -32,8 +47,8 @@ import java.util.List;
 /**
  * AppSelectActivity.
  *
- * @author kang
- * @since 14/7/27.
+ * @author ruikye
+ * @since 2014/7/27.
  */
 public class AppSelectActivity extends BaseActivity {
     private List<AppItem> mInstalledApps;
@@ -63,23 +78,12 @@ public class AppSelectActivity extends BaseActivity {
         AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1f);
         alphaAnimation.setDuration(50);
         listView.setLayoutAnimation(new LayoutAnimationController(alphaAnimation));
-        //listView.setOnItemClickListener(this);
 
         //for security
         Preference.read(this);
 
         loadInstalledApps();
     }
-
-    /*@Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        AppItem item = mInstalledApps.get(position);
-        boolean enable = Preference.inWhiteList(item.pkgName);
-        Preference.enableInWhiteList(item.pkgName, enable);
-        ItemHolder itemHolder = (ItemHolder) view.getTag();
-        itemHolder.checkBox.setChecked(enable);
-        Toast.makeText(this, item.name, Toast.LENGTH_SHORT).show();
-    }*/
 
     private void loadInstalledApps() {
         mLoadInstalledTask = new AsyncTask<Void, Void, List<AppItem>>() {
@@ -160,9 +164,9 @@ public class AppSelectActivity extends BaseActivity {
                 convertView.setBackgroundResource(R.drawable.list_item_drawable);
                 Resources res = getResources();
                 convertView.setPadding(res.getDimensionPixelSize(R.dimen.nightly_listitem_padding),
-                                       res.getDimensionPixelSize(R.dimen.default_padding),
-                                       res.getDimensionPixelSize(R.dimen.nightly_listitem_padding),
-                                       res.getDimensionPixelSize(R.dimen.default_padding));
+                        res.getDimensionPixelSize(R.dimen.default_padding),
+                        res.getDimensionPixelSize(R.dimen.nightly_listitem_padding),
+                        res.getDimensionPixelSize(R.dimen.default_padding));
 
                 item = new ItemHolder();
                 item.icon = (ImageView) convertView.findViewById(R.id.nighlty_item_icon);

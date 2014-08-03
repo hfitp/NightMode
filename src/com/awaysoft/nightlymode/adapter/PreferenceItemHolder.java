@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (C) 2014 Ruikye's open source project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.awaysoft.nightlymode.adapter;
 
 import android.content.Context;
@@ -18,6 +32,12 @@ import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
 import com.awaysoft.widget.Switch;
 
+/**
+ * Preference Item.
+ *
+ * @author kang
+ * @since 2014
+ */
 public class PreferenceItemHolder {
     public static final int ITEM_TYPE_NORMAL = 0X0000; // normal
     public static final int ITEM_TYPE_HEADER = 0X0001; // header

@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (C) 2014 Ruikye's open source project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.awaysoft.nightlymode;
 
 import android.content.BroadcastReceiver;
@@ -38,6 +52,12 @@ import com.awaysoft.widget.component.CustomDialog;
 import com.awaysoft.widget.component.CustomDialog.OnOpsBtnClickListener;
 import com.umeng.analytics.MobclickAgent;
 
+/**
+ * Preference Activity.
+ *
+ * @author ruikye
+ * @since 2014
+ */
 public class PreferenceActivity extends BaseActivity implements OnItemClickListener {
     private PreferenceAdapter mPreferenceAdapter;
 
@@ -84,8 +104,6 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
         listView.setAdapter(mPreferenceAdapter);
         listView.setOnItemClickListener(this);
 
-        // upload umeng analysis data
-        MobclickAgent.updateOnlineConfig(this);
         registerReceiver(mPreferenceChangedReceiver, new IntentFilter(Constant.BDC_SWITCH_MODE));
     }
 
@@ -120,27 +138,30 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
                 configureMatteAlpha();
                 break;
             }
-            case Constant.TAG_ID_COLOR: {
+            /*case Constant.TAG_ID_COLOR: {
                 configureMatteColor();
                 break;
             }
             case Constant.TAG_ID_AUTO_TIME: {
                 break;
-            }
+            }*/
             case Constant.TAG_ID_WHITE_LIST: {
                 MobclickAgent.onEvent(this, "main_set_white_list");
                 startActivity(new Intent(this, AppSelectActivity.class));
                 break;
             }
-            case Constant.TAG_ID_FEEDBACK: {
+            /*case Constant.TAG_ID_FEEDBACK: {
                 break;
             }
             case Constant.TAG_ID_ABOUT: {
                 break;
-            }
+            }*/
         }
     }
 
+    /**
+     * Popup dialog to set night mode
+     */
     private void configureNightMode() {
         CustomDialog nightModeDialog = new CustomDialog(this);
         ListView listView = (ListView) LayoutInflater.from(this).inflate(R.layout.nightly_listview, null);
@@ -165,6 +186,9 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
         nightModeDialog.show();
     }
 
+    /**
+     * Popup dialog to set brightness
+     */
     private void configureMatteAlpha() {
         CustomDialog alphaSetterDialog = new CustomDialog(this);
 
@@ -223,6 +247,9 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
         alphaSetterDialog.show();
     }
 
+    /**
+     * Popup dialog to set screen color
+     */
     private void configureMatteColor() {
         final CustomDialog colorSetterDialog = new CustomDialog(this);
         ColorPicker picker = new ColorPicker(this);

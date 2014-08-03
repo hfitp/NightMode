@@ -78,7 +78,9 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
             mFlagIconCache.setAlpha(0.5F);
         }
 
-        LayoutParams fLParams = new LayoutParams(48, 48);
+        int size = getResources().getDimensionPixelSize(R.dimen.nightly_float_size);
+
+        LayoutParams fLParams = new LayoutParams(size, size);
         fLParams.gravity = Gravity.CENTER;
         addView(mFlagIconCache, fLParams);
         mFlagIconCache.setVisibility(View.GONE);
@@ -89,12 +91,12 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
             mFlagIconCache.setAlpha(0.5F);
         }
 
-        fLParams = new LayoutParams(48, 48);
+        fLParams = new LayoutParams(size, size);
         fLParams.gravity = Gravity.CENTER;
         addView(mFlagIcon, fLParams);
     }
 
-    public void setAttachedWindow(WindowManager window){
+    public void setAttachedWindow(WindowManager window) {
         mAttachedWindow = window;
     }
 

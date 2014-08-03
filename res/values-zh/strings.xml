@@ -52,4 +52,7 @@
 
     <string name="night_alpha_min_value">10%</string>
     <string name="night_alpha_max_value">90%</string>
+
+    <string name="license">开放源代码</string>
+    <string name="open_source">https://github.com/rakkang/nightlymode</string>
 </resources>

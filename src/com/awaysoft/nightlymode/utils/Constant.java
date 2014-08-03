@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (C) 2014 Ruikye's open source project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.awaysoft.nightlymode.utils;
 
 import android.graphics.Color;
@@ -6,7 +20,8 @@ import android.graphics.Color;
 /**
  * Configuration for constants
  *
- * @author kang
+ * @author ruikye
+ * @since 2014
  */
 public class Constant {
     /** Animation duration */
@@ -61,6 +76,7 @@ public class Constant {
     public static final int TAG_ID_FEEDBACK = 0XFFF9;
     public static final int TAG_ID_ABOUT = 0XFFFA;
     public static final int TAG_ID_MODE = 0XFFFB;
+    public static final int TAG_ID_LICENSE = 0XFFFFC;
 
     /** Preference target key for intent */
     public static final String PREFERENCE_TARGET_KEY = "preference_target_key";

@@ -1,8 +1,19 @@
-
+/*
+ * Copyright (C) 2014 Ruikye's open source project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.awaysoft.nightlymode.adapter;
-
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +22,14 @@ import android.view.View;
 import com.awaysoft.nightlymode.R;
 import com.awaysoft.nightlymode.utils.Constant;
 
+import java.util.ArrayList;
+
+/**
+ * Preference configuration.
+ *
+ * @author ruikye
+ * @since 2014
+ */
 public class PreferenceConfig {
     public static final int HEADER = PreferenceItemHolder.ITEM_TYPE_HEADER;
     public static final int NORMAL = PreferenceItemHolder.ITEM_TYPE_NORMAL;
@@ -18,6 +37,7 @@ public class PreferenceConfig {
     public static final int CHECKBOX = PreferenceItemHolder.ITEM_TYPE_CHECKBOX;
 
     private static final ArrayList<PreferenceItemHolder> sPreferenceItems;
+
     static {
         sPreferenceItems = new ArrayList<PreferenceItemHolder>();
     }
@@ -43,7 +63,8 @@ public class PreferenceConfig {
             /** Information classify */
             sPreferenceItems.add(new PreferenceItemHolder(HEADER, R.string.information, -1, -1));
             sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.information_feedback, R.string.information_feedback_email, Constant.TAG_ID_FEEDBACK));
-            //sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.information_about, R.string.information_about_author, Constant.TAG_ID_ABOUT));
+            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.information_about, R.string.information_about_author, Constant.TAG_ID_ABOUT));
+            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.license, R.string.open_source, Constant.TAG_ID_LICENSE));
         }
     }
 

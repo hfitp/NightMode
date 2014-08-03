@@ -5,4 +5,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nightly_listitem_padding">5dip</dimen>
 
+    <dimen name="nightly_float_size">32dp</dimen>
+
 </resources>
