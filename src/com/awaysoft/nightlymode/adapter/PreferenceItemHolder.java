@@ -17,6 +17,7 @@ package com.awaysoft.nightlymode.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -180,7 +181,7 @@ public class PreferenceItemHolder {
                         .getString(labelResId));
 
                 TextView exp = (TextView) vp.findViewById(R.id.item_explain);
-                String tips = getTips();
+                String tips = getTips(exp);
                 if (TextUtils.isEmpty(tips)) {
                     exp.setVisibility(View.GONE);
                 } else {
@@ -216,7 +217,7 @@ public class PreferenceItemHolder {
         }
     }
 
-    private String getTips() {
+    private String getTips(final TextView view) {
         StringBuilder sb = new StringBuilder();
         if (explainResId > 0) {
             sb.append(mContext.getString(explainResId));
@@ -231,8 +232,18 @@ public class PreferenceItemHolder {
                 break;
             }
             case Constant.TAG_ID_COLOR: {
-                sb.append(", ").append(mContext.getString(R.string.current_string)).append("=#");
-                sb.append(Integer.toHexString(Preference.sMatteColor));
+                sb.append(", ").append(mContext.getString(R.string.current_string)).append(": ");
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int h = view.getHeight();
+                        int size = h * 2 / 3;
+                        ColorDrawable colorDrawable = new ColorDrawable(Preference.sMatteColor);
+                        colorDrawable.setBounds(0, (h - size) / 4, size, size);
+                        view.setCompoundDrawables(null, null, colorDrawable, null);
+                    }
+                });
+                //sb.append(Integer.toHexString(Preference.sMatteColor));
                 break;
             }
             case Constant.TAG_ID_AUTO_TIME: {

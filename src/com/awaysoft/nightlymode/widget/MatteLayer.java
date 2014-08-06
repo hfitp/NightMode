@@ -3,6 +3,7 @@ package com.awaysoft.nightlymode.widget;
 
 import com.awaysoft.nightlymode.utils.AnimHelper;
 import com.awaysoft.nightlymode.utils.AnimListener;
+import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
 
 import android.content.Context;
@@ -16,7 +17,7 @@ import android.widget.FrameLayout;
 
 public class MatteLayer extends FrameLayout {
 
-    private int mMatterColor;
+    private int mMatterColor = Constant.DEFAULT_COLOR;
 
     private View mMatteView;
     private WindowManager mAttachedWindow;
@@ -39,6 +40,7 @@ public class MatteLayer extends FrameLayout {
         mMatteView.setVisibility(INVISIBLE);
         addView(mMatteView);
         setMatteAlpha(Preference.sMatteAlpha);
+        setMatterColor(Preference.sMatteColor);
     }
 
     private WindowManager.LayoutParams generateWindowLayoutParams() {
@@ -47,7 +49,8 @@ public class MatteLayer extends FrameLayout {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                         WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH |
                         WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.TRANSPARENT);
+                PixelFormat.TRANSPARENT
+        );
     }
 
     /**
@@ -56,11 +59,23 @@ public class MatteLayer extends FrameLayout {
      * @param alpha value{ 0.0 ~ 1.0}
      */
     public void setMatteAlpha(float alpha) {
-        mMatterColor = Color.argb(Math.round(Math.min(alpha * 255F, 255F)), 0, 0, 0);
+        int r = Color.red(mMatterColor);
+        int g = Color.green(mMatterColor);
+        int b = Color.blue(mMatterColor);
+        mMatterColor = Color.argb(Math.round(Math.min(alpha * 255F, 255F)), r, g, b);
         mMatteView.setBackgroundColor(mMatterColor);
     }
 
-    public void setAttachedWindow(WindowManager window){
+    public void setMatterColor(int color) {
+        int a = Color.alpha(mMatterColor);
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        mMatterColor = Color.argb(a, r, g, b);
+        mMatteView.setBackgroundColor(mMatterColor);
+    }
+
+    public void setAttachedWindow(WindowManager window) {
         mAttachedWindow = window;
     }
 

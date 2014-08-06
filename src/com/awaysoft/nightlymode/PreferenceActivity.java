@@ -48,6 +48,7 @@ import com.awaysoft.widget.Switch;
 import com.awaysoft.widget.component.ColorPicker;
 import com.awaysoft.widget.component.ColorPicker.ColorObj;
 import com.awaysoft.widget.component.ColorPicker.OnColorChangeListener;
+import com.awaysoft.widget.component.ColorPickerView;
 import com.awaysoft.widget.component.CustomDialog;
 import com.awaysoft.widget.component.CustomDialog.OnOpsBtnClickListener;
 import com.umeng.analytics.MobclickAgent;
@@ -138,13 +139,13 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
                 configureMatteAlpha();
                 break;
             }
-            /*case Constant.TAG_ID_COLOR: {
+            case Constant.TAG_ID_COLOR: {
                 configureMatteColor();
                 break;
             }
             case Constant.TAG_ID_AUTO_TIME: {
                 break;
-            }*/
+            }
             case Constant.TAG_ID_WHITE_LIST: {
                 MobclickAgent.onEvent(this, "main_set_white_list");
                 startActivity(new Intent(this, AppSelectActivity.class));
@@ -252,20 +253,37 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
      */
     private void configureMatteColor() {
         final CustomDialog colorSetterDialog = new CustomDialog(this);
-        ColorPicker picker = new ColorPicker(this);
-        picker.setColorChangeListener(new OnColorChangeListener() {
-
+        final ColorPickerView picker = new ColorPickerView(this);
+        picker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
             @Override
-            public void onColorChanged(ColorObj colorObj) {
-                colorSetterDialog.setLeftBtn("" + Integer.toHexString(colorObj.color), null);
+            public void onColorChanged(int color) {
+                picker.setBackgroundColor(color);
             }
         });
-        picker.setPadding(20, 20, 20, 20);
-        picker.setLayoutParams(new LayoutParams(720, 720));
+
+        Rect padding = Utils.getNinePadding(this, R.drawable.dialog_full_holo_dark);
+        int[] size = Utils.getScreenSize(getWindowManager());
+        int dialogSize = size[0] - (padding.left + padding.right) * 2;
+        if (dialogSize <= 0) {
+            dialogSize = LayoutParams.MATCH_PARENT;
+        } else {
+            dialogSize = dialogSize * 4 / 5;
+        }
+
+        picker.setColor(Preference.sMatteColor, true);
+        picker.setLayoutParams(new LayoutParams(dialogSize, dialogSize));
         colorSetterDialog.setTitle("颜色选择");
         colorSetterDialog.setContentView(picker);
         colorSetterDialog.setLeftBtn(getString(R.string.opsbtn_left), null);
-        colorSetterDialog.setRightBtn(getString(R.string.opsbtn_right), null);
+        colorSetterDialog.setRightBtn(getString(R.string.opsbtn_right), new OnOpsBtnClickListener() {
+            @Override
+            public void onClick(View opsBtn) {
+                Preference.sMatteColor = picker.getColor();
+                mPreferenceAdapter.notifyDataSetChanged();
+                Preference.saveKey(PreferenceActivity.this, Constant.KEY_MATTE_LAYER_ALPHA, Preference.sMatteColor);
+                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_COLOR);
+            }
+        });
         colorSetterDialog.show();
     }
 }

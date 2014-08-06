@@ -25,10 +25,10 @@ android {
 
     signingConfigs {
         ruikye{
-            storeFile file(System.getenv("SIGN_STORE"))
-            storePassword System.getenv("SIGN_PWD")
-            keyAlias System.getenv("SIGN_KEY")
-            keyPassword System.getenv("SIGN_PWD")
+            //storeFile file(System.getenv("SIGN_STORE"))
+            //storePassword System.getenv("SIGN_PWD")
+            //keyAlias System.getenv("SIGN_KEY")
+            //keyPassword System.getenv("SIGN_PWD")
         }
     }
 

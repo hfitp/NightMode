@@ -292,7 +292,7 @@ public class NightlyService extends Service implements Callback {
                 }
 
                 case Constant.TAG_ID_COLOR: {
-                    //TODO change color
+                    mMatteLayer.setMatterColor(Preference.sMatteColor);
                     return;
                 }
 

@@ -52,11 +52,11 @@ public class PreferenceConfig {
             sPreferenceItems.add(new PreferenceItemHolder(SWITCHER, R.string.preference_floatwidget, R.string.preference_floatwidget_tips, Constant.TAG_ID_FLOATWIDGET));
             sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.preference_nightly_mode, -1, Constant.TAG_ID_MODE));
             sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.preference_mask_alpha, R.string.preference_mask_alpha_tips, Constant.TAG_ID_ALPHA));
-            //sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.preference_mask_color, R.string.preference_mask_color_tips, Constant.TAG_ID_COLOR));
+            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.preference_mask_color, R.string.preference_mask_color_tips, Constant.TAG_ID_COLOR));
 
             /** AutoNightly classify */
             sPreferenceItems.add(new PreferenceItemHolder(HEADER, R.string.auto_nightly, -1, -1));
-            //sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_time_buckets, R.string.auto_nightly_time_tips, Constant.TAG_ID_AUTO_TIME));
+            sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_time_buckets, R.string.auto_nightly_time_tips, Constant.TAG_ID_AUTO_TIME));
             //sPreferenceItems.add(new PreferenceItemHolder(CHECKBOX, R.string.auto_nightly_for_all, R.string.auto_nightly_for_all_tips, Constant.TAG_ID_GLOBAL));
             sPreferenceItems.add(new PreferenceItemHolder(NORMAL, R.string.auto_nightly_white_list, R.string.auto_nightly_white_list_tips, Constant.TAG_ID_WHITE_LIST));
 

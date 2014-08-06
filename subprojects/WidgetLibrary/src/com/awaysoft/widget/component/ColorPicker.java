@@ -38,7 +38,7 @@ public class ColorPicker extends View {
 
     private int mAlphaLoc = 0;
     private int mGradeLoc = 360;
-    private int[] mPickerLoc = new int[] {
+    private int[] mPickerLoc = new int[]{
             120, 80
     };
 
@@ -95,15 +95,15 @@ public class ColorPicker extends View {
 
             @Override
             public void run() {
-                initilizeRects();
+                initializedRect();
                 mGradeLoc = mGradeRect.top;
                 mAlphaLoc = mAlphaRect.left;
-                mPickerLoc = new int[] {
+                mPickerLoc = new int[]{
                         mPickerRect.left, mPickerRect.bottom - 2
                 };
 
                 mGradeLoc = 540;
-                mPickerLoc = new int[] {
+                mPickerLoc = new int[]{
                         480, 254
                 };
 
@@ -243,7 +243,7 @@ public class ColorPicker extends View {
         });
     }
 
-    private void initilizeRects() {
+    private void initializedRect() {
         int left = getPaddingLeft();
         int right = getPaddingRight();
         int top = getPaddingTop();
@@ -258,18 +258,29 @@ public class ColorPicker extends View {
         int splitY = ay / SPLIT_RATE;
 
         mPickerRect = new Rect(left, top, w - splitX - 20 - bottom, h - splitY - 20 - bottom);
-        mPickerMatte = new LinearGradient(mPickerRect.left, mPickerRect.top, mPickerRect.left, mPickerRect.bottom, new int[] {
+        mPickerMatte = new LinearGradient(mPickerRect.left, mPickerRect.top, mPickerRect.left, mPickerRect.bottom, new int[]{
                 0x000000, 0xff000000
         }, null, TileMode.CLAMP);
 
         mGradeRect = new Rect(w - right - splitX, top, w - right, h - splitY - 20 - bottom);
-        mGradeGradient = new LinearGradient(mGradeRect.right, mGradeRect.top, mGradeRect.right, mGradeRect.bottom, new int[] {
-                0xffff0000, 0xffff00ff, 0xff0000ff, 0xff00ffff, 0xff00ff00, 0xffffff00, 0xffff0000
-        }, null, TileMode.CLAMP);
+        mGradeGradient = new LinearGradient(mGradeRect.right, mGradeRect.top, mGradeRect.right, mGradeRect.bottom,
+                buildHueColorArray(), null, TileMode.CLAMP);
 
         mAlphaRect = new Rect(left, h - bottom - splitY, w - left, h - bottom);
         mAlphaGradient = new LinearGradient(mAlphaRect.left, mAlphaRect.bottom,
                 mAlphaRect.right, mAlphaRect.bottom, 0xff000000, 0x000000, TileMode.CLAMP);
+    }
+
+    private int[] buildHueColorArray() {
+        int[] hue = new int[361];
+
+        int count = 0;
+        for (int i = hue.length - 1; i >= 0; i--, count++) {
+            hue[count] = Color.HSVToColor(new float[]{
+                    i, 1f, 1f
+            });
+        }
+        return hue;
     }
 
     private void resetColorPicker(int color) {
@@ -308,64 +319,64 @@ public class ColorPicker extends View {
         int r = Color.red(color);
         int g = Color.green(color);
         int b = Color.blue(color);
-        int[] s = new int[] {
+        int[] s = new int[]{
                 r, g, b
         };
 
         sort(s);
 
-        float[] v = calCrossPoint(new float[] {
+        float[] v = calCrossPoint(new float[]{
                 s[1] - s[2], s[2] - s[0], s[0] - s[1]
-        }, new float[] {
+        }, new float[]{
                 s[0], s[1], s[2]
-        }, new float[] {
+        }, new float[]{
                 0, 1, 0
-        }, new float[] {
+        }, new float[]{
                 255, 0, 0
         });
 
-        float[] c00 = calCrossPoint(new float[] {
+        float[] c00 = calCrossPoint(new float[]{
                 0, 0, 1
-        }, new float[] {
+        }, new float[]{
                 0, 255, 0
-        }, new float[] {
+        }, new float[]{
                 0, 255 - v[1], 255
-        }, new float[] {
+        }, new float[]{
                 s[0], s[1], s[2]
         });
 
-        float[] c11 = calCrossPoint(new float[] {
+        float[] c11 = calCrossPoint(new float[]{
                 0, -1, 1
-        }, new float[] {
+        }, new float[]{
                 255, 255, 255
-        }, new float[] {
+        }, new float[]{
                 s[0] - c00[0], s[1] - c00[1], s[2] - c00[2]
-        }, new float[] {
+        }, new float[]{
                 s[0], s[1], s[2]
         });
 
-        c11 = calCrossPoint(new float[] {
+        c11 = calCrossPoint(new float[]{
                 1, 0, 0
-        }, new float[] {
+        }, new float[]{
                 255, 255, 255
-        }, new float[] {
+        }, new float[]{
                 255, v[1], 0
         }, c11);
 
         Log.i("PickerColor", String.format("C00(%f,%f,%f), C11(%f,%f,%f)", c00[0], c00[1], c00[2], c11[0], c11[1], c11[2]));
-        float d00 = calDistance(c00, new float[] {
+        float d00 = calDistance(c00, new float[]{
                 0, 0, 0
         });
 
-        float t00 = calDistance(v, new float[] {
+        float t00 = calDistance(v, new float[]{
                 0, 0, 0
         });
 
-        float d11 = calDistance(c11, new float[] {
+        float d11 = calDistance(c11, new float[]{
                 255, 255, 255
         });
 
-        float t11 = calDistance(v, new float[] {
+        float t11 = calDistance(v, new float[]{
                 255, 255, 255
         });
 
@@ -414,8 +425,8 @@ public class ColorPicker extends View {
         float vpt = lv[0] * pv[0] + lv[1] * pv[1] + lv[2] * pv[2];
 
         if (vpt == 0) {
-            return new float[] {
-                    255, 00, 00
+            return new float[]{
+                    255, 0, 0
             };
         }
 
