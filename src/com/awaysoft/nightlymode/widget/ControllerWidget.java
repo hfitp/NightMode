@@ -234,6 +234,7 @@ public class ControllerWidget extends FrameLayout implements OnClickListener, On
         } else {
             mCacheMode = Preference.sNightlyMode;
             Preference.sNightlyMode = switchStatus(Preference.sNightlyMode);
+            Preference.saveKey(getContext(), Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
             mHandler.sendEmptyMessage(Constant.MSG_STATUS_CHANGED);
             getContext().sendBroadcast(new Intent(Constant.BDC_SWITCH_MODE));
             MobclickAgent.onEvent(getContext(), "float_change_mode");

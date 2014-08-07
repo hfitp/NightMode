@@ -103,7 +103,7 @@ public class NightlyService extends Service implements Callback {
         super.onStartCommand(intent, flags, startId);
 
         Toast.makeText(this, getString(R.string.service_started), Toast.LENGTH_SHORT).show();
-        Preference.read(this);
+        //Preference.read(this);
         Preference.sServiceRunning = true;
 
         startMonitor();
@@ -151,7 +151,7 @@ public class NightlyService extends Service implements Callback {
             mFloatController = null;
         }
 
-        Preference.save(this);
+        //Preference.save(this);
         stopForeground(true);
         super.onDestroy();
         Toast.makeText(this, getString(R.string.service_stoped), Toast.LENGTH_SHORT).show();
@@ -256,7 +256,6 @@ public class NightlyService extends Service implements Callback {
             case Constant.MSG_STATUS_CHANGED: {
                 mFloatController.onStatusChanged();
                 switchMode(mTopApp);
-                Preference.saveKey(this, Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
                 break;
             }
             // Preference changed
