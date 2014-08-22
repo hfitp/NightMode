@@ -23,6 +23,7 @@ import com.awaysoft.nightlymode.utils.Preference;
 
 /**
  * For listening startup
+ *
  * @author ruikye
  * @since 2014
  */
@@ -36,9 +37,9 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-            Preference.read(context);
+            Preference.INSTANCE.read(context);
 
-            if (Preference.sAutoStart) {
+            if (Preference.sAutoStart && Preference.sServiceRunning) {
                 context.startService(new Intent(context, NightlyService.class));
             }
         }

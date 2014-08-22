@@ -45,9 +45,6 @@ import com.awaysoft.nightlymode.utils.Preference;
 import com.awaysoft.nightlymode.utils.Utils;
 import com.awaysoft.nightlymode.widget.BaseActivity;
 import com.awaysoft.widget.Switch;
-import com.awaysoft.widget.component.ColorPicker;
-import com.awaysoft.widget.component.ColorPicker.ColorObj;
-import com.awaysoft.widget.component.ColorPicker.OnColorChangeListener;
 import com.awaysoft.widget.component.ColorPickerView;
 import com.awaysoft.widget.component.CustomDialog;
 import com.awaysoft.widget.component.CustomDialog.OnOpsBtnClickListener;
@@ -61,13 +58,18 @@ import com.umeng.analytics.MobclickAgent;
  */
 public class PreferenceActivity extends BaseActivity implements OnItemClickListener {
     private PreferenceAdapter mPreferenceAdapter;
+    private Switch mServiceStatSwitch;
 
     private BroadcastReceiver mPreferenceChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (TextUtils.equals(Constant.BDC_SWITCH_MODE, action)) {
+            if (TextUtils.equals(Constant.BDC_PREFERENCE_CHANGED_FOR_ACT, action)) {
                 mPreferenceAdapter.notifyDataSetChanged();
+            } else if (TextUtils.equals(Constant.BDC_SERVICE_CLOSED, action)) {
+                if (mServiceStatSwitch != null) {
+                    mServiceStatSwitch.setChecked(false);
+                }
             }
         }
     };
@@ -79,48 +81,49 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
         mPreferenceAdapter = new PreferenceAdapter(this);
 
         // 读取配置
-        Preference.read(this);
-        PreferenceConfig.build(this);
-        Preference.sActivityRunning = true;
+        Preference.INSTANCE.read(this);
+        PreferenceConfig.INSTANCE.build(this);
 
-        Switch switcher = (Switch) findViewById(R.id.nightly_switch);
-        switcher.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        mServiceStatSwitch = (Switch) findViewById(R.id.nightly_switch);
+        mServiceStatSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton view, boolean isChecked) {
                 if (isChecked) {
-                    if (!NightlyService.sIsRunning) {
+                    if (!Utils.INSTANCE.isServiceRunning(PreferenceActivity.this, NightlyService.class.getName())) {
                         startService(new Intent(PreferenceActivity.this, NightlyService.class));
                         MobclickAgent.onEvent(PreferenceActivity.this, "start_service");
                     }
+                    Preference.sServiceRunning = true;
+                    Preference.INSTANCE.saveKey(PreferenceActivity.this, Constant.KEY_SERVICES_RUNNING, true);
                 } else {
+                    Preference.sServiceRunning = false;
+                    Preference.INSTANCE.saveKey(PreferenceActivity.this, Constant.KEY_SERVICES_RUNNING, false);
                     MobclickAgent.onEvent(PreferenceActivity.this, "stop_service");
                     stopService(new Intent(PreferenceActivity.this, NightlyService.class));
                 }
             }
         });
-        switcher.setChecked(Preference.sServiceRunning);
+        mServiceStatSwitch.setChecked(Preference.sServiceRunning);
 
         ListView listView = (ListView) findViewById(R.id.nighlty_listview);
         listView.setAdapter(mPreferenceAdapter);
         listView.setOnItemClickListener(this);
 
-        registerReceiver(mPreferenceChangedReceiver, new IntentFilter(Constant.BDC_SWITCH_MODE));
+        registerReceiver(mPreferenceChangedReceiver, new IntentFilter(Constant.BDC_PREFERENCE_CHANGED_FOR_ACT));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Preference.save(this);
+        Preference.INSTANCE.save(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mPreferenceChangedReceiver);
-        Preference.sActivityRunning = false;
-        Preference.save(this);
-        PreferenceConfig.destroy();
+        Preference.INSTANCE.save(this);
     }
 
     @Override
@@ -176,8 +179,8 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Preference.sNightlyMode = (int) Math.pow(2, position);
                 mPreferenceAdapter.notifyDataSetChanged();
-                Preference.saveKey(view.getContext(), Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
-                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_MODE);
+                Preference.INSTANCE.saveKey(view.getContext(), Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
+                PreferenceConfig.INSTANCE.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_MODE);
             }
         });
 
@@ -193,8 +196,8 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
     private void configureMatteAlpha() {
         CustomDialog alphaSetterDialog = new CustomDialog(this);
 
-        Rect padding = Utils.getNinePadding(this, R.drawable.dialog_full_holo_dark);
-        int[] size = Utils.getScreenSize(getWindowManager());
+        Rect padding = Utils.INSTANCE.getNinePadding(this, R.drawable.dialog_full_holo_dark);
+        int[] size = Utils.INSTANCE.getScreenSize(getWindowManager());
         int dialogWidth = size[0] - (padding.left + padding.right) * 2;
         if (dialogWidth <= 0) {
             dialogWidth = LayoutParams.MATCH_PARENT;
@@ -220,7 +223,7 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Preference.sMatteAlpha = 0.1f + (0.8f * progress / 100f);
-                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_ALPHA);
+                PreferenceConfig.INSTANCE.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_ALPHA);
             }
 
             @Override
@@ -240,7 +243,7 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             public void onDismiss(DialogInterface dialog) {
                 if (cacheAlpha != Preference.sMatteAlpha) {
                     mPreferenceAdapter.notifyDataSetChanged();
-                    Preference.saveKey(PreferenceActivity.this, Constant.KEY_MATTE_LAYER_ALPHA, Preference.sMatteAlpha);
+                    Preference.INSTANCE.saveKey(PreferenceActivity.this, Constant.KEY_MATTE_LAYER_ALPHA, Preference.sMatteAlpha);
                 }
             }
         });
@@ -261,8 +264,8 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             }
         });
 
-        Rect padding = Utils.getNinePadding(this, R.drawable.dialog_full_holo_dark);
-        int[] size = Utils.getScreenSize(getWindowManager());
+        Rect padding = Utils.INSTANCE.getNinePadding(this, R.drawable.dialog_full_holo_dark);
+        int[] size = Utils.INSTANCE.getScreenSize(getWindowManager());
         int dialogSize = size[0] - (padding.left + padding.right) * 2;
         if (dialogSize <= 0) {
             dialogSize = LayoutParams.MATCH_PARENT;
@@ -280,8 +283,8 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             public void onClick(View opsBtn) {
                 Preference.sMatteColor = picker.getColor();
                 mPreferenceAdapter.notifyDataSetChanged();
-                Preference.saveKey(PreferenceActivity.this, Constant.KEY_MATTE_LAYER_ALPHA, Preference.sMatteColor);
-                PreferenceConfig.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_COLOR);
+                Preference.INSTANCE.saveKey(PreferenceActivity.this, Constant.KEY_MATTE_LAYER_ALPHA, Preference.sMatteColor);
+                PreferenceConfig.INSTANCE.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_COLOR);
             }
         });
         colorSetterDialog.show();

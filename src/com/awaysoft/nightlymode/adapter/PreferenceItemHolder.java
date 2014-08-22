@@ -76,20 +76,23 @@ public class PreferenceItemHolder {
                         case Constant.TAG_ID_GLOBAL:
                             Preference.sApplyAll = isChecked;
                             break;
-                        case Constant.TAG_ID_ATUO_START:
+                        case Constant.TAG_ID_AUTO_START:
                             Preference.sAutoStart = isChecked;
                             break;
                         case Constant.TAG_ID_NOTIFICATION:
                             Preference.sNotification = isChecked;
                             break;
-                        case Constant.TAG_ID_FLOATWIDGET:
+                        case Constant.TAG_ID_FLOAT_WIDGET:
                             Preference.sFloatWidget = isChecked;
+                            break;
+                        case Constant.TAG_ID_ALERT:
+                            Preference.sNighttimeRemind = isChecked;
                             break;
                         default:
                             return;
                     }
 
-                    PreferenceConfig.onPreferenceChanged(view.getContext(), targetItemId);
+                    PreferenceConfig.INSTANCE.onPreferenceChanged(view.getContext(), targetItemId);
                 }
             };
         }
@@ -177,8 +180,7 @@ public class PreferenceItemHolder {
 
             default: {
                 ViewGroup vp = (ViewGroup) view;
-                ((TextView) vp.findViewById(R.id.item_label)).setText(view.getResources()
-                        .getString(labelResId));
+                ((TextView) vp.findViewById(R.id.item_label)).setText(view.getResources().getString(labelResId));
 
                 TextView exp = (TextView) vp.findViewById(R.id.item_explain);
                 String tips = getTips(exp);
@@ -202,14 +204,17 @@ public class PreferenceItemHolder {
             Switch switcher = (Switch) view.findViewById(R.id.nightly_switch);
             boolean status = false;
             switch (targetItemId) {
-                case Constant.TAG_ID_ATUO_START:
+                case Constant.TAG_ID_AUTO_START:
                     status = Preference.sAutoStart;
                     break;
                 case Constant.TAG_ID_NOTIFICATION:
                     status = Preference.sNotification;
                     break;
-                case Constant.TAG_ID_FLOATWIDGET:
+                case Constant.TAG_ID_FLOAT_WIDGET:
                     status = Preference.sFloatWidget;
+                    break;
+                case Constant.TAG_ID_ALERT:
+                    status = Preference.sNighttimeRemind;
                     break;
             }
             switcher.setChecked(status);

@@ -36,7 +36,8 @@ import com.awaysoft.nightlymode.PreferenceActivity;
 import com.awaysoft.nightlymode.R;
 import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
-import com.awaysoft.nightlymode.widget.ControllerWidget;
+import com.awaysoft.nightlymode.utils.Utils;
+import com.awaysoft.nightlymode.widget.FloatTouch;
 import com.awaysoft.nightlymode.widget.MatteLayer;
 import com.umeng.analytics.MobclickAgent;
 
@@ -52,8 +53,7 @@ public class NightlyService extends Service implements Callback {
     private AppMonitor mAppMonitor;
     private MatteLayer mMatteLayer;
     private WindowManager mGlobalWindow;
-    private ControllerWidget mFloatController;
-    public static boolean sIsRunning = false;
+    private FloatTouch mFloatController;
 
     // On preference changed monitor
     private BroadcastReceiver mPreferenceReceiver = new BroadcastReceiver() {
@@ -64,7 +64,7 @@ public class NightlyService extends Service implements Callback {
             }
 
             String action = intent.getAction();
-            if (Constant.BDC_PREFERENCE_CHENGED.equals(action)) {
+            if (Constant.BDC_PREFERENCE_CHANGED.equals(action)) {
                 Message msg = Message.obtain(mHandler);
                 msg.what = Constant.MSG_PREFERENCE_CHANGED;
                 msg.obj = intent.getIntExtra(Constant.PREFERENCE_TARGET_KEY, -1);
@@ -88,14 +88,11 @@ public class NightlyService extends Service implements Callback {
         mMatteLayer = new MatteLayer(this);
         mMatteLayer.setAttachedWindow(mGlobalWindow);
 
-        mFloatController = new ControllerWidget(this);
+        mFloatController = new FloatTouch(this);
         mFloatController.setAttachedWindow(mGlobalWindow);
-        mFloatController.bindHandler(mHandler);
-
-        sIsRunning = true;
 
         // Register preference monitor receiver
-        registerReceiver(mPreferenceReceiver, new IntentFilter(Constant.BDC_PREFERENCE_CHENGED));
+        registerReceiver(mPreferenceReceiver, new IntentFilter(Constant.BDC_PREFERENCE_CHANGED));
     }
 
     @Override
@@ -103,9 +100,10 @@ public class NightlyService extends Service implements Callback {
         super.onStartCommand(intent, flags, startId);
 
         Toast.makeText(this, getString(R.string.service_started), Toast.LENGTH_SHORT).show();
-        //Preference.read(this);
-        Preference.sServiceRunning = true;
+        Preference.INSTANCE.read(this);
 
+        Preference.sServiceRunning = true;
+        Preference.INSTANCE.saveKey(this, Constant.KEY_SERVICES_RUNNING, true);
         startMonitor();
 
         if (Preference.sFloatWidget) {
@@ -133,22 +131,20 @@ public class NightlyService extends Service implements Callback {
 
     @Override
     public void onDestroy() {
-        sIsRunning = false;
-        Preference.sServiceRunning = false;
         // Unregister preference monitor receiver
         unregisterReceiver(mPreferenceReceiver);
+
+        Preference.INSTANCE.save(this);
 
         stopMonitor();
         switchMode("stop");
 
         if (mMatteLayer != null) {
             mMatteLayer.detachFromWindow();
-            mMatteLayer = null;
         }
 
         if (mFloatController != null) {
             mFloatController.detachFromWindow();
-            mFloatController = null;
         }
 
         //Preference.save(this);
@@ -158,6 +154,10 @@ public class NightlyService extends Service implements Callback {
 
         // for umeng sdk
         MobclickAgent.onPause(this);
+
+        if (Preference.sServiceRunning) {
+            startService(new Intent(this, NightlyService.class));
+        }
     }
 
     private class AppMonitor extends Thread {
@@ -184,8 +184,6 @@ public class NightlyService extends Service implements Callback {
                     // Ignore
                 }
             }
-
-            sIsRunning = false;
         }
     }
 
@@ -225,7 +223,7 @@ public class NightlyService extends Service implements Callback {
         } else {
             switch (Preference.sNightlyMode) {
                 case Constant.MODE_AUTO:
-                    if (Preference.inWhiteList(pkgName)) {
+                    if (Preference.INSTANCE.inWhiteList(pkgName)) {
                         mMatteLayer.matteSmoothIn();
                     } else {
                         mMatteLayer.matteSmoothOut();
@@ -254,7 +252,6 @@ public class NightlyService extends Service implements Callback {
             }
             // Night mode changed
             case Constant.MSG_STATUS_CHANGED: {
-                mFloatController.onStatusChanged();
                 switchMode(mTopApp);
                 break;
             }
@@ -278,7 +275,7 @@ public class NightlyService extends Service implements Callback {
     }
 
     private void onPreferenceChanged(int tag) {
-        if (Preference.sActivityRunning && tag != -1) {
+        if (tag != -1) {
             switch (tag) {
                 case Constant.TAG_ID_MODE: {
                     mHandler.sendEmptyMessage(Constant.MSG_STATUS_CHANGED);
@@ -304,11 +301,20 @@ public class NightlyService extends Service implements Callback {
                     break;
                 }
 
-                case Constant.TAG_ID_FLOATWIDGET: {
+                case Constant.TAG_ID_FLOAT_WIDGET: {
                     if (Preference.sFloatWidget) {
                         mFloatController.attachToWindow(mGlobalWindow);
                     } else {
                         mFloatController.detachFromWindow();
+                    }
+                    break;
+                }
+
+                case Constant.TAG_ID_ALERT: {
+                    if (Preference.sNighttimeRemind) {
+                        Utils.INSTANCE.startNightAlarm(this);
+                    } else {
+                        Utils.INSTANCE.stopNightAlarm(this);
                     }
                     break;
                 }

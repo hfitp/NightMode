@@ -35,32 +35,32 @@ public class PreferenceAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return PreferenceConfig.getCount();
+        return PreferenceConfig.INSTANCE.getCount();
     }
 
     @Override
     public Object getItem(int position) {
-        return PreferenceConfig.get(position);
+        return PreferenceConfig.INSTANCE.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return PreferenceConfig.get(position).hashCode();
+        return PreferenceConfig.INSTANCE.get(position).hashCode();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return PreferenceConfig.get(position).getType();
+        return PreferenceConfig.INSTANCE.get(position).getType();
     }
 
     @Override
     public boolean isEnabled(int position) {
-        return PreferenceConfig.get(position).getType() != PreferenceConfig.HEADER;
+        return PreferenceConfig.INSTANCE.get(position).getType() != PreferenceConfig.INSTANCE.HEADER;
     }
 
     @Override
     public int getViewTypeCount() {
-        return PreferenceConfig.getTypeCount();
+        return PreferenceConfig.INSTANCE.getTypeCount();
     }
 
     @Override
@@ -72,11 +72,11 @@ public class PreferenceAdapter extends BaseAdapter {
                 && type == (Integer) convertView.getTag()) {
             view = convertView;
         } else {
-            view = PreferenceConfig.getView(mContext, position);
+            view = PreferenceConfig.INSTANCE.getView(mContext, position);
         }
 
         //PreferenceConfig.get(position).setEnable(view, PreferenceConfig.isEnable(position));
-        PreferenceConfig.get(position).bindView(view);
+        PreferenceConfig.INSTANCE.get(position).bindView(view);
         return view;
     }
 }

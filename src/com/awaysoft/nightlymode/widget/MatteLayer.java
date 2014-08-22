@@ -96,7 +96,7 @@ public class MatteLayer extends FrameLayout {
     public void matteSmoothIn() {
         if (mMatteView.getVisibility() != VISIBLE) {
             attachToWindows(mAttachedWindow);
-            AnimHelper.matteSmoothIn(mMatteView, new AnimListener() {
+            AnimHelper.INSTANCE.matteSmoothIn(mMatteView, new AnimListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mMatteView.setVisibility(VISIBLE);
@@ -107,7 +107,7 @@ public class MatteLayer extends FrameLayout {
 
     public void matteSmoothOut() {
         if (mMatteView.getVisibility() == VISIBLE) {
-            AnimHelper.matteSmoothOut(mMatteView, new AnimListener() {
+            AnimHelper.INSTANCE.matteSmoothOut(mMatteView, new AnimListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mMatteView.setVisibility(INVISIBLE);

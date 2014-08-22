@@ -4,5 +4,6 @@
     <dimen name="icon_size">32dip</dimen>
     <dimen name="bar_height">48dip</dimen>
     <dimen name="default_padding">10dip</dimen>
+    <dimen name="px_to_dip">1dip</dimen>
 
 </resources>

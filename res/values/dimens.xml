@@ -5,6 +5,18 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nightly_listitem_padding">5dip</dimen>
 
-    <dimen name="nightly_float_size">32dp</dimen>
+    <dimen name="nightly_float_size">64dp</dimen>
 
+    <dimen name="night_status_bar_height">25dp</dimen>
+    <dimen name="night_status_bar_height_">-25dp</dimen>
+
+    <dimen name="night_padding_5">5dp</dimen>
+    <dimen name="night_padding_10">10dp</dimen>
+    <dimen name="night_padding_15">15dp</dimen>
+    <dimen name="night_padding_20">20dp</dimen>
+
+    <!-- hdpi -->
+    <dimen name="night_controller_w">300dp</dimen>
+    <dimen name="night_controller_h">136dp</dimen>
+    <dimen name="night_controller_icon_size">42dp</dimen>
 </resources>

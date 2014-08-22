@@ -7,17 +7,18 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class AnimUtils {
+public enum  AnimUtils {
+    INSTANCE;
 
-    public static void alphaAnim(final View view, boolean in) {
+    public void alphaAnim(final View view, boolean in) {
         alphaAnim(view, in, null, in ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public static void alphaAnim(final View view, boolean in, final int endVisibility) {
+    public void alphaAnim(final View view, boolean in, final int endVisibility) {
         alphaAnim(view, in, null, endVisibility);
     }
 
-    public static void alphaAnim(final View view, boolean in, final AnimListener listener, final int endVisibility) {
+    public void alphaAnim(final View view, boolean in, final AnimListener listener, final int endVisibility) {
         if (view != null) {
             final Animation alpha = AnimationUtils.loadAnimation(view.getContext(), in ? R.anim.anim_alpha_in : R.anim.anim_alpha_out);
             if (listener != null) {

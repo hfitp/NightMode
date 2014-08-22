@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/default_padding"
+    android:background="@drawable/night_sunshine">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/night_sunshine_label"
+        android:id="@+id/night_remind_label"
+        android:textColor="#ffffc675"
+        android:shadowColor="#fffbf6ff"
+        android:shadowRadius="20"
+        android:shadowDy="1"
+        android:shadowDx="1"
+        android:layout_marginTop="72dp"
+        android:textSize="28sp"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:contentDescription="@string/app_name"
+        android:layout_below="@id/night_remind_label"
+        android:layout_centerHorizontal="true"
+        android:alpha="0.7"
+        android:src="@drawable/sun"
+        android:id="@+id/night_remind_img"/>
+
+    <Button
+        style="@style/night_remind_btn"
+        android:id="@+id/night_remind_sure"
+        android:text="@string/night_btn_close"
+        android:background="@drawable/night_day_yes"
+        android:contentDescription="@string/app_name"
+        android:layout_marginLeft="@dimen/default_padding"
+        android:layout_marginRight="@dimen/default_padding"
+        android:layout_below="@+id/night_remind_ignore"
+        android:layout_toRightOf="@+id/night_remind_center"/>
+
+    <View
+        android:id="@+id/night_remind_center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        style="@style/night_remind_btn"
+        android:id="@+id/night_remind_ignore"
+        android:background="@drawable/night_day_later"
+        android:text="@string/night_btn_later"
+        android:layout_marginRight="@dimen/default_padding"
+        android:contentDescription="@string/app_name"
+        android:layout_toLeftOf="@id/night_remind_center"
+        android:layout_below="@+id/night_remind_tips"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/night_sunshine_tips"
+        android:layout_margin="@dimen/default_padding"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:lineSpacingExtra="3dp"
+        android:textColor="#ffffffff"
+        android:id="@+id/night_remind_tips"
+        android:layout_below="@+id/night_remind_img"
+        android:layout_centerHorizontal="true"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:button="@drawable/checkbox_drawable_nobg"
+        android:text="@string/night_btn_auto_close"
+        android:layout_margin="@dimen/default_padding"
+        android:textColor="#ffc9c2d2"
+        android:id="@+id/checkBox"
+        android:textSize="14sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>

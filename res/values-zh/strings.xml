@@ -19,11 +19,13 @@
     <string name="preference_mask_alpha_tips">设置夜间模式透明度</string>
     <string name="preference_mask_color">夜间模式颜色</string>
     <string name="preference_mask_color_tips">设置夜间模式颜色</string>
+    <string name="preference_alert_night">开启夜间提醒</string>
+    <string name="preference_alert_night_tips">时间到设定的夜间时段，自动提醒</string>
 
     <!-- AutoNightly classify -->umeng-analytics-v5.2.4.jar
     <string name="auto_nightly">智能模式</string>
     <string name="auto_nightly_time_buckets">设定夜间时间</string>
-    <string name="auto_nightly_time_tips">自定义智能模式开启时间段</string>
+    <string name="auto_nightly_time_tips">自定义夜间提醒时间段</string>
     <string name="auto_nightly_for_all">启用全局智能模式</string>
     <string name="auto_nightly_for_all_tips">设置智能模式是否对所有应用使用</string>
     <string name="auto_nightly_white_list">智能模式白名单</string>
@@ -55,4 +57,18 @@
 
     <string name="license">开放源代码</string>
     <string name="open_source">https://github.com/rakkang/nightlymode</string>
+
+    <string name="night_darkness_label">～ 天 黑 了 ～</string>
+    <string name="night_darkness_tips">"夜间模式已智能检测到夜间时间了\n是否开启？"</string>
+    <string name="night_sunshine_label">~ 天 亮 了 ～</string>
+    <string name="night_sunshine_tips">"夜间模式已智能检测到天亮了\n是否关闭？"</string>
+    <string name="night_btn_ignore">忽略</string>
+    <string name="night_btn_yes">开启</string>
+    <string name="night_btn_close">关闭</string>
+    <string name="night_btn_later">延后</string>
+    <string name="night_btn_auto_start">自动开启，不再提示</string>
+    <string name="night_btn_auto_close">自动关闭, 不再提示</string>
+
+    <string name="night_controller_alpha">透明度</string>
+    <string name="night_controller_brightness">系统亮度</string>
 </resources>

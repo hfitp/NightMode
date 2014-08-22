@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:seekbar="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/night_controller_main"
+    android:layout_width="@dimen/night_controller_w"
+    android:visibility="invisible"
+    android:layout_height="wrap_content"
+    android:background="@drawable/box_bg"
+    android:layout_gravity="center">
+
+    <com.awaysoft.widget.component.MetroSeekBar
+        android:id="@+id/night_controller_alpha"
+        android:layout_marginTop="@dimen/default_padding"
+        android:layout_marginBottom="@dimen/default_padding"
+        seekbar:label="@string/night_controller_alpha"
+        seekbar:min="10"
+        seekbar:max="90"
+        seekbar:progress="65"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.awaysoft.widget.component.MetroSeekBar
+        android:id="@+id/night_controller_brightness"
+        android:layout_below="@id/night_controller_alpha"
+        android:layout_marginBottom="@dimen/default_padding"
+        seekbar:label="@string/night_controller_brightness"
+        seekbar:min="5"
+        seekbar:max="95"
+        seekbar:progress="20"
+        seekbar:progressColor="#0068b7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:layout_width="@dimen/night_controller_icon_size"
+        android:layout_height="@dimen/night_controller_icon_size"
+        android:id="@+id/night_controller_settings"
+        android:layout_marginTop="@dimen/night_padding_5"
+        android:contentDescription="@string/app_name"
+        android:layout_below="@id/night_controller_brightness"
+        android:src="@drawable/night_settings_drawable"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerInside"
+        android:layout_alignParentStart="true"/>
+
+    <ImageSwitcher
+        android:layout_width="@dimen/night_controller_icon_size"
+        android:layout_height="@dimen/night_controller_icon_size"
+        android:id="@+id/night_controller_mode"
+        android:layout_marginTop="@dimen/night_padding_5"
+        android:contentDescription="@string/app_name"
+        android:layout_below="@id/night_controller_brightness"
+        android:scaleType="centerInside"
+        android:src="@drawable/night_sub_drawable"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:layout_width="@dimen/night_controller_icon_size"
+        android:layout_height="@dimen/night_controller_icon_size"
+        android:id="@+id/night_controller_quit"
+        android:layout_marginTop="@dimen/night_padding_5"
+        android:layout_below="@id/night_controller_brightness"
+        android:src="@drawable/night_exit_drawable"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerInside"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+</RelativeLayout>

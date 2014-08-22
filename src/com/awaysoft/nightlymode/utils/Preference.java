@@ -16,10 +16,10 @@
 package com.awaysoft.nightlymode.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.text.TextUtils;
 
 /**
@@ -28,7 +28,9 @@ import android.text.TextUtils;
  * @author ruikye
  * @since 2014
  */
-public final class Preference {
+public enum Preference {
+    INSTANCE;
+
     /** Global flag */
     public volatile static int sNightlyMode = Constant.MODE_AUTO;
     /** Mask color */
@@ -45,57 +47,62 @@ public final class Preference {
     public static boolean sApplyAll = false;
     /** Service status */
     public static boolean sServiceRunning = false;
-    public static boolean sActivityRunning = false;
+    /** Nighttime remind */
+    public static boolean sNighttimeRemind = false;
     /** Float widget location */
     public static String sFloatLocation = "";
     /** Auto night time buckets */
-    public static String sTimeBuckets = Constant.DEFAULT_TIMEBUCKETS;
+    public static String sTimeBuckets = Constant.DEFAULT_TIME_BUCKETS;
     /** Auto night white list */
-    public static String sWhiteList = Constant.DEFAULT_WHITELIST;
+    public static String sWhiteList = Constant.DEFAULT_WHITE_LIST;
     /** Memory white list pool */
     private static ArrayList<Integer> sWhiteListPool = new ArrayList<Integer>();
 
-    public static void save(Context context) {
-        saveKey(context, Constant.KEY_MATTE_LAYER_COLOR, sMatteColor);
-        saveKey(context, Constant.KEY_MATTE_LAYER_ALPHA, sMatteAlpha);
-
-        saveKey(context, Constant.KEY_SERVICES_RUNNING, sServiceRunning);
-        saveKey(context, Constant.KEY_SERVICES_NIGHTLY_MODE, sNightlyMode);
-        saveKey(context, Constant.KEY_SERVICES_AUTOSTART, sAutoStart);
-        saveKey(context, Constant.KEY_SERVICES_SHOW_NOTIFICATON, sNotification);
-        saveKey(context, Constant.KEY_SERVICES_SHOW_FLOAT_WIDGET, sFloatWidget);
-
-        saveKey(context, Constant.KEY_NIGHLTY_FOR_ALLAPP, sApplyAll);
-        saveKey(context, Constant.KEY_NIGHTLY_TIMEBUCKETS, sTimeBuckets);
-
-        saveKey(context, Constant.KEY_FLOAT_WIDGET_LOCATION, sFloatLocation);
-
+    public void save(Context context) {
+        SharedPreferences sp = getPreference(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(Constant.KEY_MATTE_LAYER_COLOR, sMatteColor);
+        editor.putFloat(Constant.KEY_MATTE_LAYER_ALPHA, sMatteAlpha);
+        editor.putBoolean(Constant.KEY_SERVICES_RUNNING, sServiceRunning);
+        editor.putInt(Constant.KEY_SERVICES_NIGHTLY_MODE, sNightlyMode);
+        editor.putBoolean(Constant.KEY_SERVICES_STARTUP, sAutoStart);
+        editor.putBoolean(Constant.KEY_SERVICES_SHOW_NOTIFICATION, sNotification);
+        editor.putBoolean(Constant.KEY_SERVICES_SHOW_FLOAT_WIDGET, sFloatWidget);
+        editor.putBoolean(Constant.KEY_NIGHTLY_FOR_ALL_APP, sApplyAll);
+        editor.putString(Constant.KEY_NIGHTLY_TIME_BUCKETS, sTimeBuckets);
+        editor.putString(Constant.KEY_FLOAT_WIDGET_LOCATION, sFloatLocation);
         convertWhiteList();
-        saveKey(context, Constant.KEY_NIGHTLY_WHITE_LIST, sWhiteList);
+        editor.putString(Constant.KEY_NIGHTLY_WHITE_LIST, sWhiteList);
+
+        /*if (Build.VERSION.SDK_INT >= 9) {
+            editor.apply();
+        } else {*/
+            editor.commit();
+        //}
     }
 
-    public static void read(Context context) {
+    public void read(Context context) {
         SharedPreferences sp = getPreference(context);
 
         sMatteColor = sp.getInt(Constant.KEY_MATTE_LAYER_COLOR, Constant.DEFAULT_COLOR);
         sMatteAlpha = sp.getFloat(Constant.KEY_MATTE_LAYER_ALPHA, Constant.DEFAULT_ALPHA);
 
         sServiceRunning = sp.getBoolean(Constant.KEY_SERVICES_RUNNING, false);
-        sAutoStart = sp.getBoolean(Constant.KEY_SERVICES_AUTOSTART, false);
-        sNotification = sp.getBoolean(Constant.KEY_SERVICES_SHOW_NOTIFICATON, true);
+        sAutoStart = sp.getBoolean(Constant.KEY_SERVICES_STARTUP, false);
+        sNotification = sp.getBoolean(Constant.KEY_SERVICES_SHOW_NOTIFICATION, true);
         sFloatWidget = sp.getBoolean(Constant.KEY_SERVICES_SHOW_FLOAT_WIDGET, true);
         sNightlyMode = sp.getInt(Constant.KEY_SERVICES_NIGHTLY_MODE, Constant.MODE_AUTO);
 
-        sApplyAll = sp.getBoolean(Constant.KEY_NIGHLTY_FOR_ALLAPP, false);
-        sTimeBuckets = sp.getString(Constant.KEY_NIGHTLY_TIMEBUCKETS, Constant.DEFAULT_TIMEBUCKETS);
+        sApplyAll = sp.getBoolean(Constant.KEY_NIGHTLY_FOR_ALL_APP, false);
+        sTimeBuckets = sp.getString(Constant.KEY_NIGHTLY_TIME_BUCKETS, Constant.DEFAULT_TIME_BUCKETS);
 
         sFloatLocation = sp.getString(Constant.KEY_FLOAT_WIDGET_LOCATION, "");
 
-        sWhiteList = sp.getString(Constant.KEY_NIGHTLY_WHITE_LIST, Constant.DEFAULT_WHITELIST);
+        sWhiteList = sp.getString(Constant.KEY_NIGHTLY_WHITE_LIST, Constant.DEFAULT_WHITE_LIST);
         parseWhiteList();
     }
 
-    public static void saveKey(Context context, String key, Object value) {
+    public void saveKey(Context context, String key, Object value) {
         SharedPreferences sp = getPreference(context);
         if (value instanceof Boolean) {
             sp.edit().putBoolean(key, (Boolean) value).commit();
@@ -108,11 +115,11 @@ public final class Preference {
         }
     }
 
-    public static boolean inWhiteList(String pkg) {
+    public boolean inWhiteList(String pkg) {
         return sWhiteListPool.contains(pkg.hashCode());
     }
 
-    private static void parseWhiteList() {
+    private void parseWhiteList() {
         if (!TextUtils.isEmpty(sWhiteList)) {
             sWhiteListPool.clear();
             String[] array = sWhiteList.split("\\|");
@@ -122,7 +129,7 @@ public final class Preference {
         }
     }
 
-    private static void convertWhiteList() {
+    private void convertWhiteList() {
         if (sWhiteListPool != null) {
             StringBuilder sb = new StringBuilder();
             for (Integer key : sWhiteListPool) {
@@ -135,7 +142,7 @@ public final class Preference {
         }
     }
 
-    public static void enableInWhiteList(String pkg, boolean enable) {
+    public void enableInWhiteList(String pkg, boolean enable) {
         if (TextUtils.isEmpty(pkg)) {
             return;
         }
@@ -149,7 +156,7 @@ public final class Preference {
         }
     }
 
-    private static SharedPreferences getPreference(Context context) {
+    private SharedPreferences getPreference(Context context) {
         return context.getSharedPreferences(Constant.KEY_PREFERENCE_FILE, Context.MODE_PRIVATE);
     }
 }

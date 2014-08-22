@@ -103,7 +103,7 @@ public class ActionBar extends LinearLayout {
         if (mBackEnable != backEnable) {
             mBackEnable = backEnable;
             setTitleClickable(mBackEnable || mTitleClickable);
-            AnimUtils.alphaAnim(getStubImageView(R.id.actionbar_back_img), mBackEnable);
+            AnimUtils.INSTANCE.alphaAnim(getStubImageView(R.id.actionbar_back_img), mBackEnable);
         }
     }
 

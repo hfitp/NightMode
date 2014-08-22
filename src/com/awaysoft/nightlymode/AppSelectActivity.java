@@ -80,7 +80,7 @@ public class AppSelectActivity extends BaseActivity {
         listView.setLayoutAnimation(new LayoutAnimationController(alphaAnimation));
 
         //for security
-        Preference.read(this);
+        Preference.INSTANCE.read(this);
 
         loadInstalledApps();
     }
@@ -95,7 +95,7 @@ public class AppSelectActivity extends BaseActivity {
                 List<AppItem> installed = new ArrayList<AppItem>();
                 for (ApplicationInfo app : apps) {
                     //Only show contain CATEGORY_LAUNCHER
-                    List list = Utils.findActivitiesForPackage(AppSelectActivity.this, app.packageName);
+                    List list = Utils.INSTANCE.findActivitiesForPackage(AppSelectActivity.this, app.packageName);
                     if (list == null || list.isEmpty()) {
                         continue;
                     }
@@ -130,7 +130,7 @@ public class AppSelectActivity extends BaseActivity {
         super.onDestroy();
 
         //Save configuration
-        Preference.save(AppSelectActivity.this);
+        Preference.INSTANCE.save(AppSelectActivity.this);
 
         if (mLoadInstalledTask != null) {
             mLoadInstalledTask.cancel(true);
@@ -179,9 +179,9 @@ public class AppSelectActivity extends BaseActivity {
                         ItemHolder itemHolder = (ItemHolder) v.getTag();
                         AppItem item = mInstalledApps.get(itemHolder.index);
 
-                        boolean enable = Preference.inWhiteList(item.pkgName);
+                        boolean enable = Preference.INSTANCE.inWhiteList(item.pkgName);
                         itemHolder.checkBox.setChecked(!enable);
-                        Preference.enableInWhiteList(item.pkgName, !enable);
+                        Preference.INSTANCE.enableInWhiteList(item.pkgName, !enable);
                     }
                 });
             } else {
@@ -198,7 +198,7 @@ public class AppSelectActivity extends BaseActivity {
             item.name.setText(pkg.name);
             item.pkgName.setText(pkg.pkgName);
             item.icon.setImageDrawable(pkg.icon);
-            item.checkBox.setChecked(Preference.inWhiteList(pkg.pkgName));
+            item.checkBox.setChecked(Preference.INSTANCE.inWhiteList(pkg.pkgName));
             item.checkBox.setEnabled(!isSelf);
             item.name.setEnabled(!isSelf);
             item.pkgName.setEnabled(!isSelf);

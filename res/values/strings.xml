@@ -19,6 +19,8 @@
     <string name="preference_mask_alpha_tips">Configure night alpha</string>
     <string name="preference_mask_color">Mask Color</string>
     <string name="preference_mask_color_tips">Configure night color</string>
+    <string name="preference_alert_night">Nighttime remind</string>
+    <string name="preference_alert_night_tips">Remind when nighttime is up</string>
 
     <!-- AutoNight classify -->
     <string name="auto_nightly">Auto Night</string>
@@ -55,5 +57,19 @@
 
     <string name="license">Open Source</string>
     <string name="open_source">https://github.com/rakkang/nightlymode</string>
+
+    <string name="night_darkness_label">～ Getting dark ～</string>
+    <string name="night_darkness_tips">"It's getting dark\nDo you want to switch to night mode?"</string>
+    <string name="night_sunshine_label">~ Day breaks ～</string>
+    <string name="night_sunshine_tips">"Day breaks\nDo you want to switch to day mode?"</string>
+    <string name="night_btn_ignore">Ignore</string>
+    <string name="night_btn_yes">Yes</string>
+    <string name="night_btn_close">Yes</string>
+    <string name="night_btn_later">Delay</string>
+    <string name="night_btn_auto_start">Auto start，no remind</string>
+    <string name="night_btn_auto_close">Auto stop, no remind</string>
+
+    <string name="night_controller_alpha">alpha</string>
+    <string name="night_controller_brightness">brightness</string>
 
 </resources>

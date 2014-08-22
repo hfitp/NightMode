@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.awaysoft.nightlymode"
-          android:versionCode="1"
-          android:versionName="1.0">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.awaysoft.nightlymode"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -15,7 +16,7 @@
 
     <!-- permission for umeng sdk -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!-- umeng end -->
@@ -45,6 +46,21 @@
             android:label="@string/app_name"
             android:launchMode="singleInstance"/>
 
+        <activity
+            android:name=".NightRemindAct"
+            android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleInstance"/>
+
+        <activity
+            android:name=".ControllerActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@style/AnimationSwitch"
+            android:launchMode="singleInstance"/>
+
         <receiver android:name="com.awaysoft.nightlymode.services.BootBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -64,8 +80,12 @@
         </service>
 
         <!-- umend sdk -->
-        <meta-data android:value="53da5b43fd98c55520002a1a" android:name="UMENG_APPKEY"/>
-        <meta-data android:value="default" android:name="UMENG_CHANNEL"/>
+        <meta-data
+            android:value="53da5b43fd98c55520002a1a"
+            android:name="UMENG_APPKEY"/>
+        <meta-data
+            android:value="default"
+            android:name="UMENG_CHANNEL"/>
         <!-- umeng end -->
     </application>
 
