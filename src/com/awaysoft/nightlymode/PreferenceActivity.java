@@ -48,6 +48,7 @@ import com.awaysoft.widget.Switch;
 import com.awaysoft.widget.component.ColorPickerView;
 import com.awaysoft.widget.component.CustomDialog;
 import com.awaysoft.widget.component.CustomDialog.OnOpsBtnClickListener;
+import com.awaysoft.widget.component.MetroSeekBar;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -147,6 +148,7 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
                 break;
             }
             case Constant.TAG_ID_AUTO_TIME: {
+                configureNightTime();
                 break;
             }
             case Constant.TAG_ID_WHITE_LIST: {
@@ -161,6 +163,24 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
                 break;
             }*/
         }
+    }
+
+    private void configureNightTime() {
+        CustomDialog intervalDialog = new CustomDialog(this);
+
+        Rect padding = Utils.INSTANCE.getNinePadding(this, R.drawable.dialog_full_holo_dark);
+        int[] size = Utils.INSTANCE.getScreenSize(getWindowManager());
+        int dialogWidth = size[0] - (padding.left + padding.right) * 2;
+        if (dialogWidth <= 0) {
+            dialogWidth = LayoutParams.MATCH_PARENT;
+        }
+
+        View view = View.inflate(this, R.layout.nightly_interval_layout, null);
+        intervalDialog.setTitle("夜间时段");
+        intervalDialog.setContentView(view, new LayoutParams(dialogWidth, LayoutParams.WRAP_CONTENT));
+        intervalDialog.setLeftBtn("Cancel", null);
+        intervalDialog.setRightBtn("Okay", null);
+        intervalDialog.show();
     }
 
     /**
@@ -216,23 +236,16 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             }
         });
 
-        SeekBar bar = (SeekBar) view.findViewById(R.id.nightly_alpha_seekbar);
-        bar.setMax(100);
-        bar.setProgress((int) ((Preference.sMatteAlpha - 0.1f) * 100 / 0.8f));
-        bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        MetroSeekBar seekBar = (MetroSeekBar) view.findViewById(R.id.nightly_alpha_seekbar);
+        seekBar.setProgressChangedListener(new MetroSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Preference.sMatteAlpha = 0.1f + (0.8f * progress / 100f);
+            public void onProgressChanged(float value) {
+                Preference.sMatteAlpha = value / 100f;
                 PreferenceConfig.INSTANCE.onPreferenceChanged(PreferenceActivity.this, Constant.TAG_ID_ALPHA);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                //Ignore
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onTouchEnd(float value) {
                 //Ignore
             }
         });

@@ -267,17 +267,19 @@ public class IntervalSeekBar extends View {
             if (mMinIsDraging || mMaxIsDraging) {
                 getShowText();
             } else {
-                post(new Runnable() {
+                if (mChangedListenter != null) {
+                    post(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if (mMinIsDraging) {
-                            mChangedListenter.onChanged(mMinPercentage);
-                        } else {
-                            mChangedListenter.onChanged(mMaxPercentage);
+                        @Override
+                        public void run() {
+                            if (mMinIsDraging) {
+                                mChangedListenter.onChanged(mMinPercentage);
+                            } else {
+                                mChangedListenter.onChanged(mMaxPercentage);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             invalidate();
@@ -298,7 +300,7 @@ public class IntervalSeekBar extends View {
     }
 
     private void drawMinThumb(Canvas canvas) {
-        float y = (H - mSeekBarWidth) / 2 - mThumbHeight;
+        float y = (H - mSeekBarWidth) / 2 + mSeekBarWidth;
         float x = Ox + mMinValue - mThumbWidth / 2;
 
         if (mMinThumbRect == null) {

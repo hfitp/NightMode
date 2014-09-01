@@ -1,37 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:metro="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/default_padding">
 
-    <TextView
-        android:id="@+id/nighlty_alpha_min"
-        android:text="@string/night_alpha_min_value"
-        style="@style/item_explain_text"
-        android:layout_centerVertical="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <SeekBar
+    <com.awaysoft.widget.component.MetroSeekBar
         android:id="@+id/nightly_alpha_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:progress="20"
-        android:max="100"
-        android:layout_margin="@dimen/default_padding"
-        android:progressDrawable="@drawable/night_seek_progress_drawable"
-        android:thumb="@drawable/night_seek_control_drawable"
-        android:layout_toRightOf="@+id/nighlty_alpha_min"
-        android:layout_toLeftOf="@+id/nighlty_alpha_max"/>
+        metro:min="10"
+        metro:max="90"
+        metro:progress="50"
+        android:layout_margin="@dimen/default_padding"/>
 
-    <TextView
-        android:id="@+id/nighlty_alpha_max"
-        android:text="@string/night_alpha_max_value"
-        style="@style/item_explain_text"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 </RelativeLayout>
