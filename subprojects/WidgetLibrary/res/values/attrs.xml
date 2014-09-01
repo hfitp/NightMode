@@ -45,5 +45,11 @@
         <attr name="textColor" format="color"/>
         <attr name="thumb" format="reference"/>
     </declare-styleable>
+    
+    <!-- Define intervalSeekBar attribute -->
+    <declare-styleable name="IntervalSeekBar">
+        <attr name="thumbMin" format="reference"/>
+        <attr name="thumbMax" format="reference"/>
+    </declare-styleable>
 
 </resources>

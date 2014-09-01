@@ -49,6 +49,7 @@ public class Constant {
     /** Default preference */
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final float DEFAULT_ALPHA = 0.6F;
+    public static final float DEFAULT_BRIGHTNESS = 0.2F;
     public static final String DEFAULT_TIME_BUCKETS = "20:00|06:30";
     public static final String DEFAULT_WHITE_LIST = "com.awaysoft.nightlymode".hashCode() + "";
 
@@ -64,6 +65,7 @@ public class Constant {
     public static final String KEY_NIGHTLY_WHITE_LIST = "nightly_auto_white_list";
     public static final String KEY_NIGHTLY_TIME_BUCKETS = "nightly_auto_time_buckets";
     public static final String KEY_FLOAT_WIDGET_LOCATION = "float_widget_location";
+    public static final String KEY_NIGHT_BIRGHTNESS = "night_system_brightness";
 
     /** Preference target id */
     public static final int TAG_ID_AUTO_START = 0XFFF1;

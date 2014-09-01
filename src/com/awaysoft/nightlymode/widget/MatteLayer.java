@@ -83,7 +83,12 @@ public class MatteLayer extends FrameLayout {
         if (getParent() == null) {
             mAttachedWindow = window;
             WindowManager.LayoutParams lParams = generateWindowLayoutParams();
-            mAttachedWindow.addView(this, lParams);
+
+            try {
+                mAttachedWindow.addView(this, lParams);
+            } catch (Exception e) {
+                //ignore
+            }
         }
     }
 

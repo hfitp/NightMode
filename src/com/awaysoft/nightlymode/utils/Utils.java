@@ -143,6 +143,20 @@ public enum Utils {
         alarmManager.cancel(genarateAlarmIntent(context));
     }
 
+    /**
+     * 判断是否开启了自动亮度调节
+     */
+    public static boolean isAutoBrightness(ContentResolver aContentResolver) {
+        boolean automicBrightness = false;
+        try {
+            automicBrightness = Settings.System.getInt(aContentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return automicBrightness;
+    }
+
     public boolean isServiceRunning(Context context, String className) {
         Log.d("NightMode", "--------" + className);
 

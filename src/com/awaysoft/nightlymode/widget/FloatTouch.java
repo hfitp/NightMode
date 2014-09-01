@@ -95,7 +95,12 @@ public class FloatTouch extends FrameLayout implements OnClickListener, OnLongCl
 
             mFlagIcon.setImageResource(R.drawable.night_touch_drawable);
 
-            mAttachedWindow.addView(this, mWLParams);
+            try {
+                mAttachedWindow.addView(this, mWLParams);
+            } catch (Exception e) {
+                //ignore
+            }
+
             setVisibility(INVISIBLE);
             post(new Runnable() {
                 @Override
@@ -125,6 +130,7 @@ public class FloatTouch extends FrameLayout implements OnClickListener, OnLongCl
             }
 
             Preference.sFloatLocation = mWLParams.x + "|" + mWLParams.y;
+            mAttachedWindow = null;
         }
     }
 

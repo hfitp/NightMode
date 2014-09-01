@@ -37,6 +37,8 @@ public enum Preference {
     public static int sMatteColor = Constant.DEFAULT_COLOR;
     /** Mask alpha */
     public static float sMatteAlpha = Constant.DEFAULT_ALPHA;
+    /** Default system brightness */
+    public static float sBrightness = Constant.DEFAULT_BRIGHTNESS;
     /** Auto start */
     public static boolean sAutoStart = false;
     /** Show notification */
@@ -71,6 +73,7 @@ public enum Preference {
         editor.putBoolean(Constant.KEY_NIGHTLY_FOR_ALL_APP, sApplyAll);
         editor.putString(Constant.KEY_NIGHTLY_TIME_BUCKETS, sTimeBuckets);
         editor.putString(Constant.KEY_FLOAT_WIDGET_LOCATION, sFloatLocation);
+        editor.putFloat(Constant.KEY_NIGHT_BIRGHTNESS, sBrightness);
         convertWhiteList();
         editor.putString(Constant.KEY_NIGHTLY_WHITE_LIST, sWhiteList);
 
@@ -86,6 +89,7 @@ public enum Preference {
 
         sMatteColor = sp.getInt(Constant.KEY_MATTE_LAYER_COLOR, Constant.DEFAULT_COLOR);
         sMatteAlpha = sp.getFloat(Constant.KEY_MATTE_LAYER_ALPHA, Constant.DEFAULT_ALPHA);
+        sBrightness = sp.getFloat(Constant.KEY_NIGHT_BIRGHTNESS, Constant.DEFAULT_BRIGHTNESS);
 
         sServiceRunning = sp.getBoolean(Constant.KEY_SERVICES_RUNNING, false);
         sAutoStart = sp.getBoolean(Constant.KEY_SERVICES_STARTUP, false);

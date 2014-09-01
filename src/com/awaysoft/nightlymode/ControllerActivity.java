@@ -3,6 +3,7 @@ package com.awaysoft.nightlymode;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import com.awaysoft.nightlymode.services.NightlyService;
 import com.awaysoft.nightlymode.utils.AnimListener;
 import com.awaysoft.nightlymode.utils.Constant;
 import com.awaysoft.nightlymode.utils.Preference;
+import com.awaysoft.nightlymode.utils.Utils;
 import com.awaysoft.nightlymode.widget.BaseActivity;
 import com.awaysoft.widget.component.MetroSeekBar;
 
@@ -29,7 +31,6 @@ import com.awaysoft.widget.component.MetroSeekBar;
 public class ControllerActivity extends BaseActivity implements View.OnClickListener, ViewSwitcher.ViewFactory {
     private View mControllerView;
     private ImageSwitcher mNightStatImg;
-    private MetroSeekBar mBrightnessSeekBar;
 
     private static final int[] MODE_ICONs = {
             R.drawable.night_auto_drawable,
@@ -49,7 +50,7 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
 
         mNightStatImg = (ImageSwitcher) findViewById(R.id.night_controller_mode);
 
-        AlphaAnimation in = new AlphaAnimation(0f, 1f);
+        final AlphaAnimation in = new AlphaAnimation(0f, 1f);
         in.setDuration(300);
         mNightStatImg.setInAnimation(in);
 
@@ -75,7 +76,26 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
             }
         });
 
-        mBrightnessSeekBar = (MetroSeekBar) findViewById(R.id.night_controller_brightness);
+        MetroSeekBar brightnessSeekBar = (MetroSeekBar) findViewById(R.id.night_controller_brightness);
+
+        if (Utils.isAutoBrightness(getContentResolver())) {
+            Utils.INSTANCE.stopAutoBrightness(this);
+        }
+
+        int brightness = Utils.INSTANCE.getGlobalScrennBrightness(this);
+        brightnessSeekBar.setRealValue(brightness);
+        brightnessSeekBar.setProgressChangedListener(new MetroSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(float value) {
+                previewBrightness(value);
+            }
+
+            @Override
+            public void onTouchEnd(float value) {
+                Utils.INSTANCE.saveBrightness(getContentResolver(), (int) value);
+            }
+        });
+
         findViewById(R.id.night_controller_settings).setOnClickListener(this);
         findViewById(R.id.night_controller_mode).setOnClickListener(this);
         findViewById(R.id.night_controller_quit).setOnClickListener(this);
@@ -156,6 +176,16 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
         mControllerView.startAnimation(anim);
     }
 
+    private void previewBrightness(float brightness) {
+
+        Log.d("NightMode", "brightness -> " + brightness);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        WindowManager.LayoutParams wLParams = getWindow().getAttributes();
+        wLParams.screenBrightness = brightness / 255F;
+        wLParams.buttonBrightness = brightness / 255F;
+        getWindow().setAttributes(wLParams);
+    }
+
     @Override
     public void onBackPressed() {
         exit();
@@ -164,6 +194,7 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onPause() {
         super.onPause();
+        PreferenceConfig.INSTANCE.onPreferenceChanged(ControllerActivity.this, Constant.TAG_ID_FLOAT_WIDGET);
         finish();
     }
 
