@@ -29,6 +29,7 @@ import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -312,9 +313,16 @@ public class NightlyService extends Service implements Callback {
 
                 case Constant.TAG_ID_ALERT: {
                     if (Preference.sNighttimeRemind) {
-                        Utils.INSTANCE.startNightAlarm(this);
+                        String[] times = Preference.sTimeBuckets.split("\\|");
+                        String[] start = times[0].split(":");
+                        String[] end = times[1].split(":");
+                        Utils.INSTANCE.startNightAlarm(this, Integer.valueOf(start[0]),
+                                Integer.valueOf(start[1]), Constant.ALARM_FLAG_NIGHT_START);
+                        Utils.INSTANCE.startNightAlarm(this, Integer.valueOf(end[0]),
+                                Integer.valueOf(end[1]), Constant.ALARM_FLAG_NIGHT_END);
                     } else {
-                        Utils.INSTANCE.stopNightAlarm(this);
+                        Utils.INSTANCE.stopNightAlarm(this, Constant.ALARM_FLAG_NIGHT_START);
+                        Utils.INSTANCE.stopNightAlarm(this, Constant.ALARM_FLAG_NIGHT_END);
                     }
                     break;
                 }

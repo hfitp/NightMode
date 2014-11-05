@@ -33,8 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 
 import com.awaysoft.nightlymode.adapter.PreferenceAdapter;
 import com.awaysoft.nightlymode.adapter.PreferenceConfig;
@@ -48,7 +47,9 @@ import com.awaysoft.widget.Switch;
 import com.awaysoft.widget.component.ColorPickerView;
 import com.awaysoft.widget.component.CustomDialog;
 import com.awaysoft.widget.component.CustomDialog.OnOpsBtnClickListener;
+import com.awaysoft.widget.component.IntervalSeekBar;
 import com.awaysoft.widget.component.MetroSeekBar;
+import com.awaysoft.widget.component.OnSeekBarValueChangedListener;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -165,6 +166,9 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
         }
     }
 
+    /**
+     * 设置夜间模式自动提醒时间
+     */
     private void configureNightTime() {
         CustomDialog intervalDialog = new CustomDialog(this);
 
@@ -175,11 +179,47 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
             dialogWidth = LayoutParams.MATCH_PARENT;
         }
 
+        final String[] nightTime = getResources().getStringArray(R.array.night_time_values);
+        String[] times = Preference.sTimeBuckets.split("\\|");
+
+        int min = 0, max = 0;
+        for (int i = 0; i < nightTime.length; ++i) {
+            String str = nightTime[i];
+            if (str.equals(times[0])) {
+                min = i + 1;
+            } else if (str.equals(times[1])) {
+                max = i + 1;
+            }
+        }
+
         View view = View.inflate(this, R.layout.nightly_interval_layout, null);
-        intervalDialog.setTitle("夜间时段");
+
+        IntervalSeekBar intervalSeekBar = (IntervalSeekBar) view.findViewById(R.id.night_nighttime_seek_bar);
+        intervalSeekBar.setIntervalSize(nightTime.length);
+        intervalSeekBar.setMinPercentage(min * 1f / nightTime.length);
+        intervalSeekBar.setMaxPercentage(max * 1f / nightTime.length);
+        intervalSeekBar.setValueChangedListener(new OnSeekBarValueChangedListener() {
+            @Override
+            public String onChanging(float percentage) {
+                return nightTime[(int) (percentage * (nightTime.length - 1))];
+            }
+
+            @Override
+            public void onChanged(float percentage, View seekBar) {
+                IntervalSeekBar intervalSeekBar1 = (IntervalSeekBar) seekBar;
+                String start = nightTime[(int) (intervalSeekBar1.getMinPercentage() * (nightTime.length - 1))];
+                String end = nightTime[(int) (intervalSeekBar1.getMaxPercentage() * (nightTime.length - 1))];
+                String buckets = start + "|" + end;
+                Preference.sTimeBuckets = buckets;
+                mPreferenceAdapter.notifyDataSetChanged();
+                Preference.INSTANCE.saveKey(seekBar.getContext(), Constant.KEY_NIGHTLY_TIME_BUCKETS, buckets);
+            }
+        });
+
+        intervalDialog.setTitle(R.string.auto_nightly_time_buckets);
         intervalDialog.setContentView(view, new LayoutParams(dialogWidth, LayoutParams.WRAP_CONTENT));
-        intervalDialog.setLeftBtn("Cancel", null);
-        intervalDialog.setRightBtn("Okay", null);
+        intervalDialog.setLeftBtn(getString(R.string.opsbtn_left), null);
+        intervalDialog.setRightBtn(getString(R.string.opsbtn_right), null);
         intervalDialog.show();
     }
 

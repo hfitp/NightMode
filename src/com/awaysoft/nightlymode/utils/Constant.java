@@ -84,4 +84,10 @@ public class Constant {
 
     /** Preference target key for intent */
     public static final String PREFERENCE_TARGET_KEY = "preference_target_key";
+
+    public static final long MILLISECOND_OF_DAY = 24 * 60 * 60 * 1000;
+
+    public static final String ALARM_INTENT_FLAG = "intent_alarm_flag";
+    public static final String ALARM_FLAG_NIGHT_START = "alarm_night_start";
+    public static final String ALARM_FLAG_NIGHT_END = "alarm_night_end";
 }

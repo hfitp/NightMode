@@ -11,3 +11,5 @@ libs/.DS_Store
 ruikye.store
 .gitlog
 subprojects/subprojects.iml
+gradlew*
+gradle/

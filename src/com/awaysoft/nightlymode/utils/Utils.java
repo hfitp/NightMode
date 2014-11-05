@@ -36,6 +36,8 @@ import android.view.WindowManager;
 
 import com.awaysoft.nightlymode.NightRemindAct;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,7 +86,7 @@ public enum Utils {
         return packageManager.queryIntentActivities(mainIntent, 0);
     }
 
-    public int getGlobalScrennBrightness(Context context) {
+    public int getGlobalScreenBrightness(Context context) {
         int nowBrightnessValue = -1;
         ContentResolver resolver = context.getContentResolver();
         try {
@@ -98,7 +100,7 @@ public enum Utils {
     /**
      * 停止自动亮度调节
      *
-     * @param context
+     * @param context context
      */
     public void stopAutoBrightness(Context context) {
         Settings.System.putInt(context.getContentResolver(),
@@ -108,7 +110,7 @@ public enum Utils {
     /**
      * 开启亮度自动调节
      *
-     * @param context
+     * @param context context
      */
     public void startAutoBrightness(Context context) {
         Settings.System.putInt(context.getContentResolver(),
@@ -118,29 +120,77 @@ public enum Utils {
     /**
      * 保存亮度设置状态
      *
-     * @param resolver
-     * @param brightness
+     * @param resolver   to save
+     * @param brightness value
      */
     public void saveBrightness(ContentResolver resolver, int brightness) {
         Uri uri = android.provider.Settings.System.getUriFor("screen_brightness");
         android.provider.Settings.System.putInt(resolver, "screen_brightness", brightness);
-        // resolver.registerContentObserver(uri, true, myContentObserver);
         resolver.notifyChange(uri, null);
     }
 
-    private PendingIntent genarateAlarmIntent(Context context) {
+    private PendingIntent generateAlarmIntent(Context context, String flag) {
         Intent intent = new Intent(context, NightRemindAct.class);
-        return PendingIntent.getActivity(context, 0, intent, Intent.FILL_IN_ACTION);
+        intent.putExtra(Constant.ALARM_INTENT_FLAG, flag);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
-    public void startNightAlarm(Context context) {
+    /**
+     * 设置指定时间的闹钟
+     *
+     * @param context context
+     * @param hours   小时：00 ~ 23
+     * @param minutes 分钟：00 ~ 59
+     */
+    public void startNightAlarm(Context context, int hours, int minutes, String flag) {
+        //safety check
+        if (hours < 0 || hours >= 24) {
+            hours = 0;
+        }
+
+        if (minutes < 0 || hours >= 60) {
+            minutes = 0;
+        }
+
+        Log.d("night alarm", "Flag: " + flag + " @ " + hours + ":" + minutes);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, genarateAlarmIntent(context));
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getMillisFromNow(hours, minutes),
+                Constant.MILLISECOND_OF_DAY, generateAlarmIntent(context, flag));
     }
 
-    public void stopNightAlarm(Context context) {
+    public void stopNightAlarm(Context context, String flag) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(genarateAlarmIntent(context));
+        alarmManager.cancel(generateAlarmIntent(context, flag));
+    }
+
+    /**
+     * 设置延迟闹钟
+     *
+     * @param context      context
+     * @param milliseconds 延迟时间
+     */
+    public void delayedAlarm(Context context, long milliseconds, String flag) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + milliseconds, generateAlarmIntent(context, flag));
+    }
+
+    public long getMillisFromNow(int hours, int minutes) {
+        Calendar calendar = Calendar.getInstance();
+
+        int nowH = calendar.get(Calendar.HOUR_OF_DAY);
+        int nowM = calendar.get(Calendar.MINUTE);
+
+        if (nowH > hours || (nowH == hours && nowM >= minutes)) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minutes);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTimeInMillis();
     }
 
     /**
@@ -158,8 +208,6 @@ public enum Utils {
     }
 
     public boolean isServiceRunning(Context context, String className) {
-        Log.d("NightMode", "--------" + className);
-
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> serviceList = activityManager.getRunningServices(100);
 
@@ -168,7 +216,6 @@ public enum Utils {
         }
 
         for (ActivityManager.RunningServiceInfo aServiceList : serviceList) {
-            Log.d("NightMode", aServiceList.service.getClassName());
             if (aServiceList.service.getClassName().equals(className)) {
                 return true;
             }

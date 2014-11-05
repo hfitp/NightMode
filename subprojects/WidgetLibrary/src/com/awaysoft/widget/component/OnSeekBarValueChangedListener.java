@@ -1,12 +1,14 @@
 
 package com.awaysoft.widget.component;
 
+import android.view.View;
+
 /**
  * Value changed listener for {@link IntervalSeekBar} and {@link MetroSeekBar}
  * 
  * @author kang
  */
-public interface OnSeekBarValueChangedListenter {
+public interface OnSeekBarValueChangedListener {
     /**
      * on changing
      * 
@@ -20,5 +22,5 @@ public interface OnSeekBarValueChangedListenter {
      * 
      * @param percentage current percentage
      */
-    public void onChanged(float percentage);
+    public void onChanged(float percentage, View seekBar);
 }

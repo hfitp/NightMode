@@ -19,6 +19,8 @@ public class IntervalSeekBar extends View {
     private int W = 0;
     private int H = 0;
     private int Ox = 0;
+    private int mAllInterval = -1;
+    private float mMinDragDistance = 0;
 
     private int mMinPadding = 10;
 
@@ -56,7 +58,7 @@ public class IntervalSeekBar extends View {
     private String mMinValueText;
     private String mMaxValueText;
 
-    private OnSeekBarValueChangedListenter mChangedListenter;
+    private OnSeekBarValueChangedListener mChangedListenter;
 
     public IntervalSeekBar(Context context) {
         this(context, null);
@@ -95,10 +97,14 @@ public class IntervalSeekBar extends View {
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
     }
 
-    public void setValueChangedListener(OnSeekBarValueChangedListenter changeListener) {
+    public void setValueChangedListener(OnSeekBarValueChangedListener changeListener) {
         mChangedListenter = changeListener;
         getShowText();
         invalidate();
+    }
+
+    public void setIntervalSize(int size){
+        mAllInterval = Math.max(0, size);
     }
 
     /**
@@ -185,6 +191,10 @@ public class IntervalSeekBar extends View {
 
         mMinValue = mMinPercentage * W;
         mMaxValue = mMaxPercentage * W;
+
+        if (mAllInterval > 0) {
+            mMinDragDistance = W*1.0f / mAllInterval;
+        }
     }
 
     @Override
@@ -226,21 +236,22 @@ public class IntervalSeekBar extends View {
             case MotionEvent.ACTION_MOVE: {
                 if (mMinIsDraging || mMaxIsDraging) {
                     float dx = x - mLastX;
-                    mLastX = x;
+                    if (Math.abs(dx) >= mMinDragDistance) {
+                        if (mMinIsDraging) {
+                            mMinValue += dx;
+                            mMinValue = Math.max(0, mMinValue);
+                            mMinValue = Math.min(mMaxValue, mMinValue);
+                            mMinPercentage = mMinValue / W;
+                        } else if (mMaxIsDraging) {
+                            mMaxValue += dx;
+                            mMaxValue = Math.max(mMinValue, mMaxValue);
+                            mMaxValue = Math.min(W, mMaxValue);
+                            mMaxPercentage = mMaxValue / W;
+                        }
 
-                    if (mMinIsDraging) {
-                        mMinValue += dx;
-                        mMinValue = Math.max(0, mMinValue);
-                        mMinValue = Math.min(mMaxValue, mMinValue);
-                        mMinPercentage = mMinValue / W;
-                    } else if (mMaxIsDraging) {
-                        mMaxValue += dx;
-                        mMaxValue = Math.max(mMinValue, mMaxValue);
-                        mMaxValue = Math.min(W, mMaxValue);
-                        mMaxPercentage = mMaxValue / W;
+                        needInvalidate = true;
+                        mLastX = x;
                     }
-
-                    needInvalidate = true;
                 }
 
                 break;
@@ -273,9 +284,9 @@ public class IntervalSeekBar extends View {
                         @Override
                         public void run() {
                             if (mMinIsDraging) {
-                                mChangedListenter.onChanged(mMinPercentage);
+                                mChangedListenter.onChanged(mMinPercentage, IntervalSeekBar.this);
                             } else {
-                                mChangedListenter.onChanged(mMaxPercentage);
+                                mChangedListenter.onChanged(mMaxPercentage, IntervalSeekBar.this);
                             }
                         }
                     });

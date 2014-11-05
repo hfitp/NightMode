@@ -82,7 +82,7 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
             Utils.INSTANCE.stopAutoBrightness(this);
         }
 
-        int brightness = Utils.INSTANCE.getGlobalScrennBrightness(this);
+        int brightness = Utils.INSTANCE.getGlobalScreenBrightness(this);
         brightnessSeekBar.setRealValue(brightness);
         brightnessSeekBar.setProgressChangedListener(new MetroSeekBar.OnProgressChangedListener() {
             @Override
@@ -177,7 +177,6 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
     }
 
     private void previewBrightness(float brightness) {
-
         Log.d("NightMode", "brightness -> " + brightness);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         WindowManager.LayoutParams wLParams = getWindow().getAttributes();
