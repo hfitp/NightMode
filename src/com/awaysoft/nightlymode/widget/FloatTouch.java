@@ -179,11 +179,12 @@ public class FloatTouch extends FrameLayout implements OnClickListener, OnLongCl
 
     @Override
     public void onClick(View v) {
+        detachFromWindow();
         Intent intent = new Intent(getContext(), ControllerActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getContext().startActivity(intent);
 
-        AlphaAnimation alpha = new AlphaAnimation(1f, 0f);
+        /*AlphaAnimation alpha = new AlphaAnimation(1f, 0f);
         alpha.setDuration(180);
         alpha.setAnimationListener(new AnimListener() {
             @Override
@@ -191,6 +192,6 @@ public class FloatTouch extends FrameLayout implements OnClickListener, OnLongCl
                 detachFromWindow();
             }
         });
-        mFlagIcon.startAnimation(alpha);
+        mFlagIcon.startAnimation(alpha);*/
     }
 }

@@ -10,10 +10,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
+
+import java.util.Locale;
 
 public class MatteLayer extends FrameLayout {
 
@@ -37,7 +40,6 @@ public class MatteLayer extends FrameLayout {
 
     private void initialize() {
         mMatteView = new View(getContext());
-        mMatteView.setVisibility(INVISIBLE);
         addView(mMatteView);
         setMatteAlpha(Preference.sMatteAlpha);
         setMatterColor(Preference.sMatteColor);
@@ -99,26 +101,22 @@ public class MatteLayer extends FrameLayout {
     }
 
     public void matteSmoothIn() {
-        if (mMatteView.getVisibility() != VISIBLE) {
+        if (getParent() == null) {
             attachToWindows(mAttachedWindow);
-            AnimHelper.INSTANCE.matteSmoothIn(mMatteView, new AnimListener() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mMatteView.setVisibility(VISIBLE);
-                }
-            });
+            AnimHelper.INSTANCE.matteSmoothIn(mMatteView, null);
         }
+        Log.d("NightMode", "matte in");
     }
 
     public void matteSmoothOut() {
-        if (mMatteView.getVisibility() == VISIBLE) {
+        if (getParent() != null) {
             AnimHelper.INSTANCE.matteSmoothOut(mMatteView, new AnimListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    mMatteView.setVisibility(INVISIBLE);
                     detachFromWindow();
                 }
             });
         }
+        Log.d("NightMode", "matte out");
     }
 }

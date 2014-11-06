@@ -79,9 +79,6 @@ public class AppSelectActivity extends BaseActivity {
         alphaAnimation.setDuration(50);
         listView.setLayoutAnimation(new LayoutAnimationController(alphaAnimation));
 
-        //for security
-        Preference.INSTANCE.read(this);
-
         loadInstalledApps();
     }
 
@@ -105,6 +102,11 @@ public class AppSelectActivity extends BaseActivity {
                     item.name = packageManager.getApplicationLabel(app).toString();
                     item.pkgName = app.packageName;
                     installed.add(item);
+                }
+
+                synchronized (Preference.INSTANCE) {
+                    //for security
+                    Preference.INSTANCE.read(AppSelectActivity.this);
                 }
 
                 return installed;

@@ -153,7 +153,6 @@ public class PreferenceActivity extends BaseActivity implements OnItemClickListe
                 break;
             }
             case Constant.TAG_ID_WHITE_LIST: {
-                MobclickAgent.onEvent(this, "main_set_white_list");
                 startActivity(new Intent(this, AppSelectActivity.class));
                 break;
             }

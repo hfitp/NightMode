@@ -107,7 +107,7 @@ public class NightlyService extends Service implements Callback {
         Preference.INSTANCE.saveKey(this, Constant.KEY_SERVICES_RUNNING, true);
         startMonitor();
 
-        if (Preference.sFloatWidget) {
+        if (Preference.sFloatWidget && !Preference.sPreferenceRunning) {
             mFloatController.attachToWindow(mGlobalWindow);
         } else {
             mFloatController.detachFromWindow();
@@ -303,7 +303,7 @@ public class NightlyService extends Service implements Callback {
                 }
 
                 case Constant.TAG_ID_FLOAT_WIDGET: {
-                    if (Preference.sFloatWidget) {
+                    if (Preference.sFloatWidget && !Preference.sPreferenceRunning) {
                         mFloatController.attachToWindow(mGlobalWindow);
                     } else {
                         mFloatController.detachFromWindow();

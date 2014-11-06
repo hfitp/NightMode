@@ -46,13 +46,7 @@ public enum AnimHelper {
             anim.setAnimationListener(listener);
         }
 
-        trackMatteView.post(new Runnable() {
-
-            @Override
-            public void run() {
-                trackMatteView.startAnimation(anim);
-            }
-        });
+        trackMatteView.startAnimation(anim);
     }
 
     public void matteSmoothOut(final View trackMatteView, AnimListener listener) {
@@ -70,13 +64,7 @@ public enum AnimHelper {
             anim.setAnimationListener(listener);
         }
 
-        trackMatteView.post(new Runnable() {
-
-            @Override
-            public void run() {
-                trackMatteView.startAnimation(anim);
-            }
-        });
+        trackMatteView.startAnimation(anim);
     }
 
     public void statusFlagSmoothIn(final View view, AnimListener listener) {

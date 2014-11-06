@@ -59,6 +59,7 @@ public enum Preference {
     public static String sWhiteList = Constant.DEFAULT_WHITE_LIST;
     /** Memory white list pool */
     private static ArrayList<Integer> sWhiteListPool = new ArrayList<Integer>();
+    public static boolean sPreferenceRunning = false;
 
     public void save(Context context) {
         SharedPreferences sp = getPreference(context);

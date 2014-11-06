@@ -29,7 +29,6 @@ import com.awaysoft.widget.component.MetroSeekBar;
  * @since 14/8/20.
  */
 public class ControllerActivity extends BaseActivity implements View.OnClickListener, ViewSwitcher.ViewFactory {
-    private View mControllerView;
     private ImageSwitcher mNightStatImg;
 
     private static final int[] MODE_ICONs = {
@@ -99,30 +98,7 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
         findViewById(R.id.night_controller_settings).setOnClickListener(this);
         findViewById(R.id.night_controller_mode).setOnClickListener(this);
         findViewById(R.id.night_controller_quit).setOnClickListener(this);
-
-        mControllerView = findViewById(R.id.night_controller_main);
-        mControllerView.setClickable(true);
-
-        ViewParent vp = mControllerView.getParent();
-        if (vp instanceof View) {
-            ((View) vp).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    overridePendingTransition(0, 0);
-                    exit();
-                }
-            });
-        }
-
-        mControllerView.post(new Runnable() {
-            @Override
-            public void run() {
-                AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1f);
-                alphaAnimation.setDuration(180);
-                mControllerView.setVisibility(View.VISIBLE);
-                mControllerView.startAnimation(alphaAnimation);
-            }
-        });
+        findViewById(R.id.night_controller_main).setClickable(true);
     }
 
     private int switchStatus(int src) {
@@ -143,7 +119,7 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
         switch (id) {
             case R.id.night_controller_settings:
                 startActivity(new Intent(this, PreferenceActivity.class));
-                exit();
+                finish();
                 break;
             case R.id.night_controller_mode:
                 Preference.sNightlyMode = switchStatus(Preference.sNightlyMode);
@@ -157,27 +133,12 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
                 stopService(new Intent(this, NightlyService.class));
                 sendBroadcast(new Intent(Constant.BDC_SERVICE_CLOSED));
                 overridePendingTransition(0, 0);
-                exit();
+                finish();
                 break;
         }
     }
 
-    private void exit() {
-        PreferenceConfig.INSTANCE.onPreferenceChanged(ControllerActivity.this, Constant.TAG_ID_FLOAT_WIDGET);
-        Animation anim = new AlphaAnimation(1f, 0f);
-        anim.setDuration(180);
-        anim.setAnimationListener(new AnimListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mControllerView.setVisibility(View.INVISIBLE);
-                finish();
-            }
-        });
-        mControllerView.startAnimation(anim);
-    }
-
     private void previewBrightness(float brightness) {
-        Log.d("NightMode", "brightness -> " + brightness);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         WindowManager.LayoutParams wLParams = getWindow().getAttributes();
         wLParams.screenBrightness = brightness / 255F;
@@ -186,20 +147,11 @@ public class ControllerActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void onBackPressed() {
-        exit();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         PreferenceConfig.INSTANCE.onPreferenceChanged(ControllerActivity.this, Constant.TAG_ID_FLOAT_WIDGET);
+        Preference.INSTANCE.saveKey(this, Constant.KEY_SERVICES_NIGHTLY_MODE, Preference.sNightlyMode);
         finish();
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
     }
 
     @Override
